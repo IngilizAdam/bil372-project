@@ -6,14 +6,28 @@ use proje;
 
 -- Tables
 
+	create table timetable (
+		time_id int not null auto_increment,
+		
+		timetable_day int not null,
+		timetable_hour int not null,
+
+		primary key (time_id),
+		unique key (timetable_day, timetable_hour)
+	);
+
+	-- ------------------------------------------------
+
 	create table students (
 		student_id int not null,
 		
-		first_name varchar(25),
-		last_name varchar(25),
-		age int not null,
+		tr_id char(11) not null,
+		first_name varchar(16) not null,
+		last_name varchar(16) not null,
+		birth_date date not null,
 		
-		primary key(student_id)
+		primary key(student_id),
+		unique key(tr_id)
 	);
 	
 		create table active_students (
@@ -33,14 +47,14 @@ use proje;
 	create table parents (
 		student_id int not null,
 		
-		first_name varchar(25),
-		last_name varchar(25),
+		tr_id char(11) not null,
+		first_name varchar(16) not null,
+		last_name varchar(16) not null,
 		phone_number char(11),
-		email varchar(50),
+		email varchar(64),
 		
 		foreign key(student_id) references students(student_id),
-		key(phone_number),
-		key(email)
+		primary key(student_id)
 	);
 	
 	-- ------------------------------------------------
@@ -48,55 +62,71 @@ use proje;
 	create table expenses (
 		expense_id int not null auto_increment,
 		
+		expense_name varchar(32) not null,
 		amount int not null,
-		is_fixed bool not null,
-		spending_date date not null,
+		is_fixed boolean not null,
+		expense_date date not null,
 		
 		primary key(expense_id)
 	);
+
+	--	create table fixed_expense (
+	--		fixed_expense_id int not null,
+	--		
+	--		foreign key (fixed_expense_id) references expenses(expense_id),
+	--		primary key (fixed_expense_id)
+	--	);
+	--
+	--	create table onetime_expense (
+	--		onetime_expense_id int not null,
+	--		
+	--		foreign key (onetime_expense_id) references expenses(expense_id),
+	--		primary key (onetime_expense_id)
+	--	);
 	
 	-- ------------------------------------------------
 	
 	create table courses (
 		course_id char(6) not null,
 		
-		course_name varchar(25) not null,
-		course_minimum_demand_amount_to_open int not null,
-		course_demand_amount int not null, -- Determines whether the course will be opened
+		course_name varchar(32) not null,
+		course_minimum_demand_to_open int not null,
 		
 		primary key (course_id),
-		key(course_name)
+		unique key(course_name)
 	);
 	
 	create table course_times(
 		course_id char(6) not null,
+		course_time_id int not null,
 		
-		starting_date date not null,
-		starting_hour time not null,
-		
-		foreign key (course_id) references courses (course_id)
+		foreign key (course_time_id) references timetable (time_id),
+		foreign key (course_id) references courses (course_id),
+		unique key (course_id, course_time_id)
 	);
 	
-	create table course_materials (
-		course_id char(6) not null,
+	create table materials (
+		material_id int not null auto_increment,
 		
-		amount int not null,
-		name varchar(32) not null,
-		amount_needed_to_open_course int not null,
+		material_amount int not null,
+		material_name varchar(32) not null,
 		
-		foreign key (course_id) references courses (course_id)
+		primary key (material_id)
 	);
 	
 	-- ------------------------------------------------
 	
 	create table employees (
-			employee_id int not null,
-			
-			salary int not null,
-			first_name varchar(25) not null,
-			last_name varchar(25) not null,
-			
-			primary key (employee_id)
+		employee_id int not null,
+		
+		tr_id char(11) not null,
+		first_name varchar(25) not null,
+		last_name varchar(25) not null,
+
+		salary int not null,
+		
+		primary key (employee_id),
+		unique key (tr_id)
 	);
 	
 		create table janitors (
@@ -105,10 +135,10 @@ use proje;
 			foreign key (janitor_id) references employees(employee_id)
 		);
 		
-		create table teachers (
-			teacher_id int not null,
+		create table instructors (
+			instructor_id int not null,
 			
-			foreign key (teacher_id) references employees(employee_id)
+			foreign key (instructor_id) references employees(employee_id)
 		);
 		
 		create table administrative_staffs (
@@ -119,35 +149,55 @@ use proje;
 	
 	-- ------------------------------------------------
 	
-	create table teacher_to_teached_courses (
-		teacher_id int not null,
-		teached_course_id char(6) not null,
+	create table instructor_to_courses (
+		instructor_id int not null,
+		course_id char(6) not null,
 		
-		foreign key (teacher_id) references teachers(teacher_id),
-		foreign key (teached_course_id) references courses(course_id),
-		key (teacher_id, teached_course_id)
+		foreign key (instructor_id) references instructors(instructor_id),
+		foreign key (course_id) references courses(course_id),
+		unique key (instructor_id, course_id)
 	);
 	
-	create table teacher_to_available_hours ( -- Assumed all teachers will have their working hours entered via this list including both part and fulltime teachers
-		teacher_id int not null,
+	create table instructor_to_available_hours ( -- Assumed all instructors will have their working hours entered via this list including both part and fulltime instructors
+		instructor_id int not null,
+		available_time_id int not null,
 		
-		available_day varchar(9) not null, -- Example: monday
-		an_available_hour time not null, -- Must be an integer ranging from 0 to 23 and assume next hour starting from here is available
+		foreign key (available_time_id) references timetable (time_id),
+		foreign key (instructor_id) references instructors (instructor_id),
+		unique key (instructor_id, available_time_id)
+	);
+
+	-- ------------------------------------------------
+
+	create table material_to_courses(
+		course_id char(6) not null,
+		material_id int not null,
 		
-		foreign key (teacher_id) references teachers (teacher_id),
-		key (teacher_id, available_day, an_available_hour)
+		foreign key (course_id) references courses (course_id),
+		foreign key (material_id) references materials (material_id),
+		primary key (course_id, material_id)
 	);
 	
 	-- ------------------------------------------------
 	
 	create table active_student_to_available_hours (
 		active_student_id int not null,
+		available_time_id int not null,
 		
-		available_day varchar(9) not null, -- Example: monday
-		an_available_hour time not null, -- Must be an integer ranging from 0 to 23 and assume next hour starting from here is available
-		
+		foreign key (available_time_id) references timetable (time_id),
 		foreign key (active_student_id) references active_students (active_student_id),
-		key(active_student_id, available_day, an_available_hour)
+		key(active_student_id, available_time_id)
+	);
+
+	-- ------------------------------------------------
+
+	create table student_demand_to_course (
+		student_id int not null,
+		course_id char(6) not null,
+		
+		foreign key (student_id) references students (student_id),
+		foreign key (course_id) references courses (course_id),
+		unique key (student_id, course_id)
 	);
 
 -- Triggers
@@ -155,46 +205,43 @@ use proje;
 	-- ------------------------------------------------
 	
 	create trigger delete_student_parents before delete on students for each row -- Delete parents of a deleted student
-		delete from parents where  parents.student_id=old.student_id;
+		delete from parents where parents.student_id=old.student_id;
+
+	create trigger delete_active_student after delete on active_students for each row -- Delete student as well when a active_students is deleted
+		delete from students s where s.student_id=old.active_students_id;
 	
 	create trigger delete_graduated_student after delete on graduated_students for each row -- Delete student as well when a graduated_student is deleted
-		delete from students s where  s.student_id=old.graduated_student_id;
-	
-	create trigger add_graduated_student after insert on graduated_students for each row -- Delete active_student when he graduates
-		delete from active_students as2 where as2.active_student_id=new.graduated_student_id;
+		delete from students s where s.student_id=old.graduated_student_id;
 	
 	-- ------------------------------------------------
 	
 	create trigger delete_administrative_staff_employee after delete on administrative_staffs for each row -- Delete employee instance of a administrative_staff upon deletion
-		delete from employees where  employees.employee_id=old.administrative_staff_id;
+		delete from employees where employees.employee_id=old.administrative_staff_id;
 	
+
+	create trigger delete_instructor_employee after delete on instructors for each row -- Delete employee instance of a instructor upon deletion
+		delete from employees e where e.employee_id=old.instructor_id;
 	
-	create trigger delete_teacher_employee after delete on teachers for each row -- Delete employee instance of a teacher upon deletion
-		delete from employees e where e.employee_id=old.teacher_id;
-	
-		create trigger delete_teacher_available_hours before delete on teachers for each row -- Delete a teachers available hours when he is deleted
-			delete from teacher_to_available_hours ttah where ttah.teacher_id=old.teacher_id;
+		create trigger delete_instructor_available_hours before delete on instructors for each row -- Delete a instructors available hours when he is deleted
+			delete from instructor_to_available_hours itah where itah.instructor_id=old.instructor_id;
 		
-		create trigger delete_teacher_teached_courses before delete on teachers for each row -- Delete a teachers teached courses when he is deleted
-			delete from teacher_to_teached_courses tttc where tttc.teacher_id=old.teacher_id;
+		create trigger delete_instructor_to_courses before delete on instructors for each row -- Delete a instructors teached courses when he is deleted
+			delete from instructor_to_courses itc where itc.instructor_id=old.instructor_id;
 	
 	
 	create trigger delete_janitor_employee after delete on janitors for each row -- Delete employee instance of a janitor upon deletion
-		delete from employees where  employees.employee_id=old.janitor_id;
+		delete from employees where employees.employee_id=old.janitor_id;
 	
 -- ------------------------------------------------
 	
-	create trigger delete_course_materials before delete on courses for each row -- Delete materials required by a course upon deletion
-		delete from course_materials where  course_materials.required_by_course_id=old.course_id;
+	create trigger delete_materials before delete on courses for each row -- Delete materials required by a course upon deletion
+		delete from material_to_courses where material_to_courses.course_id=old.course_id;
 	
 	create trigger delete_course_times before delete on courses for each row -- Delete times of a course upon deletion
-		delete from course_times where course_times.course_id=old .course_id;
+		delete from course_times where course_times.course_id=old.course_id;
 
 -- ADD MORE TRIGGERS PERHAPS?
-	
-	
-	
-	
+
 
 -- Filling the tables and testing
 
@@ -254,17 +301,17 @@ use proje;
 		(2, 2500, 'Mehmet Burak', 'Akgun')
 	;
 	
-	insert into teachers (teacher_id)
+	insert into instructors (instructor_id)
 	values
 		(1)
 	;
 	
-	insert into teacher_to_available_hours (teacher_id, available_day, an_available_hour)
+	insert into instructor_to_available_hours (instructor_id, available_day, an_available_hour)
 	values
 		(1, 'monday', '13:00:00')
 	;
 	
-	insert into teacher_to_teached_courses (teacher_id, teached_course_id)
+	insert into instructor_to_teached_courses (instructor_id, teached_course_id)
 	values
 		(1, 'MAT101')
 	;
@@ -285,8 +332,8 @@ use proje;
    
 	delete from graduated_students where graduated_student_id=2;
 
-	delete from teachers where teacher_id=1;
+	delete from instructors where instructor_id=1;
 
-   	select * from teachers t;
+   	select * from instructors t;
 
 	
