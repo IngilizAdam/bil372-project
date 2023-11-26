@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,23 +12,33 @@ namespace _372_project
     {
         private static MySqlConnection connection;
 
-        public static MySqlConnection getConnection()
+        private static void setConnection()
         {
-            MySqlConnection connection = new MySqlConnection();
-            connection.ConnectionString = "server=hasantuna.com;uid=hasan;pwd=31721Kzh5;database=odev2";
+            connection = new MySqlConnection();
+            connection.ConnectionString = "server=hasantuna.com;uid=hasan;pwd=31721Kzh5;database=okul_veri_tabani";
             connection.Open();
-            return connection;
         }
 
+        public static DataSet selectCommand(string command)
+        {
+            if (!isConnectionReady())
+                setConnection();
 
+            MySqlCommand cmd = new MySqlCommand(command, connection);
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+            DataSet dataSet = new DataSet();
+            adapter.Fill(dataSet);
 
-        public static void closeConnection()
+            return dataSet;
+        }
+
+        private static void closeConnection()
         {
             if(isConnectionReady())
                 connection.Close();
         }
 
-        public static bool isConnectionReady()
+        private static bool isConnectionReady()
         {
             return connection != null && connection.State == System.Data.ConnectionState.Open;
         }
