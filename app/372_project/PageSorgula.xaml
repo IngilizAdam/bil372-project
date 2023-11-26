@@ -34,7 +34,7 @@
         </Button>
 
         <Border Grid.Row="2" Grid.Column="0" Grid.RowSpan="6" Grid.ColumnSpan="5" Margin="10,10,10,10">
-            <DataGrid x:Name="dataGrid" d:ItemsSource="{d:SampleData ItemCount=10}" AutoGenerateColumns="true" IsReadOnly="True"/>
+            <DataGrid x:Name="dataGrid" ItemsSource="{Binding }" AutoGenerateColumns="true" IsReadOnly="True"/>
         </Border>
     </Grid>
 </Page>
