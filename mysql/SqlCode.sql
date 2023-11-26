@@ -50,14 +50,13 @@ CREATE TABLE STUDENT (
     stud_id       	INT,
     stud_fname      VARCHAR(12) NOT NULL,
     stud_lname      VARCHAR(12) NOT NULL,
-    stud_birth_year INT,
+    stud_birth_year DATE,
     stud_sex      	BOOL,
     stud_reg_date 	DATE        NOT NULL,
     stud_gpa      	FLOAT         NOT NULL,
     stud_email    	VARCHAR(32) NOT NULL,
     stud_number   	CHAR(11)    NOT NULL,
     
-    CHECK (stud_birth_year >= 2005),
     CHECK (stud_gpa >= 0 and stud_gpa <= 4),
     
     PRIMARY KEY (stud_id)
@@ -162,10 +161,10 @@ CREATE TABLE INST_AVAIL_HOUR (
 CREATE TABLE RELATIVE (
     stud_id   INT,
     pare_id   INT,
-    rela_type INT,
+    rela_type VARCHAR(16),
     
     PRIMARY KEY (stud_id, pare_id),
-    FOREIGN KEY (stud_id) REFERENCES ACTIVE(stud_id),
+    FOREIGN KEY (stud_id) REFERENCES STUDENT(stud_id),
     FOREIGN KEY (pare_id) REFERENCES PARENT(pare_id)
 );
 
