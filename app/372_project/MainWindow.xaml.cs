@@ -8,6 +8,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Diagnostics; // for Debug.WriteLine
 
 namespace _372_project
 {
@@ -19,6 +20,7 @@ namespace _372_project
         public MainWindow()
         {
             InitializeComponent();
+            this.Content = new PageMain();
         }
     }
 }
