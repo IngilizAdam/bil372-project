@@ -1,339 +1,291 @@
-drop database if exists proje;
+# Boolean {table}_sex attributes are 0 for man, 1 for woman
+# Boolean empl_type is 0 for, full-time 1 for part time
+# Boolean exps_type is 0 for regular expenses, 1 for specific expenses
 
-create database proje;
+# Hour attributes has to be between 8 and 17 to enumerate 08.00 to 17.00
+# Day attributes has to be between 0 and 6 to enumerate Monday to Sunday
 
-use proje;
+# It may be more convenient to control the data constraints on application since it is 
+#   easier to maintain
 
--- Tables
+drop database if exists okul_veri_tabani;
+create database okul_veri_tabani;
+use okul_veri_tabani;
 
-	create table timetable (
-		time_id int not null auto_increment,
-		
-		timetable_day int not null,
-		timetable_hour int not null,
+CREATE TABLE EMPLOYEE (
+    empl_id       INT,
+    empl_type     BOOL        NOT NULL,
+    empl_fname    VARCHAR(12) NOT NULL,
+    empl_lname    VARCHAR(12) NOT NULL,
+    empl_salary   INT         NOT NULL,
+    empl_reg_date DATE        NOT NULL,
+    
+    CHECK (empl_salary >= 0),
+    
+    PRIMARY KEY(empl_id)
+);
 
-		primary key (time_id),
-		unique key (timetable_day, timetable_hour)
-	);
+CREATE TABLE ADMIN_STAFF (
+    empl_id INT,
+    
+    PRIMARY KEY (empl_id),
+    FOREIGN KEY (empl_id) REFERENCES EMPLOYEE(empl_id)
+);
 
-	-- ------------------------------------------------
+CREATE TABLE INSTRUCTOR (
+    empl_id INT,
+    
+    PRIMARY KEY (empl_id),
+    FOREIGN KEY (empl_id) REFERENCES EMPLOYEE(empl_id)
+);
 
-	create table students (
-		student_id int not null,
-		
-		tr_id char(11) not null,
-		first_name varchar(16) not null,
-		last_name varchar(16) not null,
-		birth_date date not null,
-		
-		primary key(student_id),
-		unique key(tr_id)
-	);
-	
-		create table active_students (
-			active_student_id int not null,
-			
-			foreign key (active_student_id) references students(student_id)
-		);
-	
-		create table graduated_students (
-			graduated_student_id int not null,
-			
-			foreign key (graduated_student_id) references students(student_id)
-		);
-	
-	-- ------------------------------------------------
-		
-	create table parents (
-		student_id int not null,
-		
-		tr_id char(11) not null,
-		first_name varchar(16) not null,
-		last_name varchar(16) not null,
-		phone_number char(11),
-		email varchar(64),
-		
-		foreign key(student_id) references students(student_id),
-		primary key(student_id)
-	);
-	
-	-- ------------------------------------------------
-	
-	create table expenses (
-		expense_id int not null auto_increment,
-		
-		expense_name varchar(32) not null,
-		amount int not null,
-		is_fixed boolean not null,
-		expense_date date not null,
-		
-		primary key(expense_id)
-	);
+CREATE TABLE STAFF (
+    empl_id INT,
+    
+    PRIMARY KEY (empl_id),
+    FOREIGN KEY (empl_id) REFERENCES EMPLOYEE(empl_id)
+);
 
-	--	create table fixed_expense (
-	--		fixed_expense_id int not null,
-	--		
-	--		foreign key (fixed_expense_id) references expenses(expense_id),
-	--		primary key (fixed_expense_id)
-	--	);
-	--
-	--	create table onetime_expense (
-	--		onetime_expense_id int not null,
-	--		
-	--		foreign key (onetime_expense_id) references expenses(expense_id),
-	--		primary key (onetime_expense_id)
-	--	);
-	
-	-- ------------------------------------------------
-	
-	create table courses (
-		course_id char(6) not null,
-		
-		course_name varchar(32) not null,
-		course_minimum_demand_to_open int not null,
-		
-		primary key (course_id),
-		unique key(course_name)
-	);
-	
-	create table course_times(
-		course_id char(6) not null,
-		course_time_id int not null,
-		
-		foreign key (course_time_id) references timetable (time_id),
-		foreign key (course_id) references courses (course_id),
-		unique key (course_id, course_time_id)
-	);
-	
-	create table materials (
-		material_id int not null auto_increment,
-		
-		material_amount int not null,
-		material_name varchar(32) not null,
-		
-		primary key (material_id)
-	);
-	
-	-- ------------------------------------------------
-	
-	create table employees (
-		employee_id int not null,
-		
-		tr_id char(11) not null,
-		first_name varchar(25) not null,
-		last_name varchar(25) not null,
+CREATE TABLE STUDENT (
+    stud_id       	INT,
+    stud_fname      VARCHAR(12) NOT NULL,
+    stud_lname      VARCHAR(12) NOT NULL,
+    stud_birth_year INT,
+    stud_sex      	BOOL,
+    stud_reg_date 	DATE        NOT NULL,
+    stud_gpa      	FLOAT         NOT NULL,
+    stud_email    	VARCHAR(32) NOT NULL,
+    stud_number   	CHAR(11)    NOT NULL,
+    
+    CHECK (stud_birth_year >= 2005),
+    CHECK (stud_gpa >= 0 and stud_gpa <= 4),
+    
+    PRIMARY KEY (stud_id)
+);
 
-		salary int not null,
-		
-		primary key (employee_id),
-		unique key (tr_id)
-	);
-	
-		create table janitors (
-			janitor_id int not null,
-			
-			foreign key (janitor_id) references employees(employee_id)
-		);
-		
-		create table instructors (
-			instructor_id int not null,
-			
-			foreign key (instructor_id) references employees(employee_id)
-		);
-		
-		create table administrative_staffs (
-			administrative_staff_id int not null,
-			
-			foreign key (administrative_staff_id) references employees(employee_id)
-		);
-	
-	-- ------------------------------------------------
-	
-	create table instructor_to_courses (
-		instructor_id int not null,
-		course_id char(6) not null,
-		
-		foreign key (instructor_id) references instructors(instructor_id),
-		foreign key (course_id) references courses(course_id),
-		unique key (instructor_id, course_id)
-	);
-	
-	create table instructor_to_available_hours ( -- Assumed all instructors will have their working hours entered via this list including both part and fulltime instructors
-		instructor_id int not null,
-		available_time_id int not null,
-		
-		foreign key (available_time_id) references timetable (time_id),
-		foreign key (instructor_id) references instructors (instructor_id),
-		unique key (instructor_id, available_time_id)
-	);
+CREATE TABLE ACTIVE (
+    stud_id INT,
+    
+    PRIMARY KEY (stud_id),
+    FOREIGN KEY (stud_id) REFERENCES STUDENT(stud_id)
+);
 
-	-- ------------------------------------------------
+CREATE TABLE GRADUATE (
+    stud_id        INT,
+    grad_grad_date DATE,
 
-	create table material_to_courses(
-		course_id char(6) not null,
-		material_id int not null,
-		
-		foreign key (course_id) references courses (course_id),
-		foreign key (material_id) references materials (material_id),
-		primary key (course_id, material_id)
-	);
-	
-	-- ------------------------------------------------
-	
-	create table active_student_to_available_hours (
-		active_student_id int not null,
-		available_time_id int not null,
-		
-		foreign key (available_time_id) references timetable (time_id),
-		foreign key (active_student_id) references active_students (active_student_id),
-		key(active_student_id, available_time_id)
-	);
+    PRIMARY KEY (stud_id),
+    FOREIGN KEY (stud_id) REFERENCES STUDENT(stud_id)
+);
 
-	-- ------------------------------------------------
+CREATE TABLE PARENT (
+    pare_id     INT,
+    pare_fname  VARCHAR(12) NOT NULL,
+    pare_lname  VARCHAR(12) NOT NULL,
+    pare_sex    BOOL,
+    pare_email  VARCHAR(32) NOT NULL,
+    pare_number CHAR(11)    NOT NULL,
+    
+    PRIMARY KEY (pare_id)
+);
 
-	create table student_demand_to_course (
-		student_id int not null,
-		course_id char(6) not null,
-		
-		foreign key (student_id) references students (student_id),
-		foreign key (course_id) references courses (course_id),
-		unique key (student_id, course_id)
-	);
+CREATE TABLE EXPENSE (
+    exps_id INT,
+    exps_name VARCHAR(12) NOT NULL,
+    exps_date DATE        NOT NULL,
+    exps_cost INT         NOT NULL,
+    exps_type BOOL        NOT NULL,
+    
+    CHECK (exps_cost >= 0),
+    
+    PRIMARY KEY (exps_id)
+);
 
--- Triggers
+CREATE TABLE STOCK (
+    stck_id    INT,
+    stck_name  VARCHAR(12) NOT NULL,
+    stck_count INT         NOT NULL,
+    
+    CHECK (stck_count >= 0),
+    
+    PRIMARY KEY (stck_id)
+);
 
-	-- ------------------------------------------------
-	
-	create trigger delete_student_parents before delete on students for each row -- Delete parents of a deleted student
-		delete from parents where parents.student_id=old.student_id;
+CREATE TABLE COURSE (
+    cour_id         INT,
+    cour_min_req    INT,
+    cour_instructor INT not null,
+    
+    CHECK (cour_min_req >= 0),
+    
+    PRIMARY KEY (cour_id),
+    FOREIGN KEY (cour_instructor) REFERENCES INSTRUCTOR(empl_id)
+);
 
-	create trigger delete_active_student after delete on active_students for each row -- Delete student as well when a active_students is deleted
-		delete from students s where s.student_id=old.active_students_id;
-	
-	create trigger delete_graduated_student after delete on graduated_students for each row -- Delete student as well when a graduated_student is deleted
-		delete from students s where s.student_id=old.graduated_student_id;
-	
-	-- ------------------------------------------------
-	
-	create trigger delete_administrative_staff_employee after delete on administrative_staffs for each row -- Delete employee instance of a administrative_staff upon deletion
-		delete from employees where employees.employee_id=old.administrative_staff_id;
-	
+CREATE TABLE LECTURE (
+    lect_id   INT,
+    lect_hour INT NOT NULL,
+    lect_day  INT NOT NULL,
+    
+    CHECK (lect_hour >= 0 AND lect_hour <= 23),
+    CHECK (lect_day >= 0 AND lect_day <= 6),
+    
+    PRIMARY KEY(lect_id)
+);
 
-	create trigger delete_instructor_employee after delete on instructors for each row -- Delete employee instance of a instructor upon deletion
-		delete from employees e where e.employee_id=old.instructor_id;
-	
-		create trigger delete_instructor_available_hours before delete on instructors for each row -- Delete a instructors available hours when he is deleted
-			delete from instructor_to_available_hours itah where itah.instructor_id=old.instructor_id;
-		
-		create trigger delete_instructor_to_courses before delete on instructors for each row -- Delete a instructors teached courses when he is deleted
-			delete from instructor_to_courses itc where itc.instructor_id=old.instructor_id;
-	
-	
-	create trigger delete_janitor_employee after delete on janitors for each row -- Delete employee instance of a janitor upon deletion
-		delete from employees where employees.employee_id=old.janitor_id;
-	
--- ------------------------------------------------
-	
-	create trigger delete_materials before delete on courses for each row -- Delete materials required by a course upon deletion
-		delete from material_to_courses where material_to_courses.course_id=old.course_id;
-	
-	create trigger delete_course_times before delete on courses for each row -- Delete times of a course upon deletion
-		delete from course_times where course_times.course_id=old.course_id;
+-- ----------------------------------------------------------------------------
 
--- ADD MORE TRIGGERS PERHAPS?
+CREATE TABLE STUD_AVAIL_HOUR (
+    stud_id    INT,
+    avail_hour INT,
+    avail_day  INT,
+    
+    CHECK (avail_hour >= 0 AND avail_hour <= 23),
+    CHECK (avail_day >= 0 AND avail_day <= 6),
+    
+    PRIMARY KEY (stud_id, avail_hour, avail_day),
+    FOREIGN KEY (stud_id) REFERENCES ACTIVE(stud_id)
+);
+
+CREATE TABLE INST_AVAIL_HOUR (
+    empl_id    INT,
+    avail_hour INT,
+    avail_day  INT,
+    
+    CHECK (avail_hour >= 0 AND avail_hour <= 23),
+    CHECK (avail_day >= 0 AND avail_day <= 6),
+    
+    PRIMARY KEY (empl_id, avail_hour, avail_day),
+    FOREIGN KEY (empl_id) REFERENCES INSTRUCTOR(empl_id)
+);
+
+CREATE TABLE RELATIVE (
+    stud_id   INT,
+    pare_id   INT,
+    rela_type INT,
+    
+    PRIMARY KEY (stud_id, pare_id),
+    FOREIGN KEY (stud_id) REFERENCES ACTIVE(stud_id),
+    FOREIGN KEY (pare_id) REFERENCES PARENT(pare_id)
+);
+
+CREATE TABLE REQUESTED_COURSE (
+    stud_id INT,
+    cour_id INT,
+    
+    PRIMARY KEY(stud_id, cour_id),
+    FOREIGN KEY(stud_id) REFERENCES ACTIVE(stud_id),
+    FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id)
+);
+
+CREATE TABLE TAKEN_COURSE (
+    stud_id INT,
+    cour_id INT,
+    
+    PRIMARY KEY(stud_id, cour_id),
+    FOREIGN KEY(stud_id) REFERENCES ACTIVE(stud_id),
+    FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id)
+);
+
+CREATE TABLE ALLOCATED_LECTURE (
+    cour_id INT,
+    lect_id INT,
+    
+    PRIMARY KEY(cour_id, lect_id),
+    FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id),
+    FOREIGN KEY(lect_id) REFERENCES LECTURE(lect_id)
+);
+
+CREATE TABLE NEEDED_STOCK (
+    cour_id     INT,
+    stck_id     INT,
+    need_amount INT NOT NULL,
+
+    PRIMARY KEY (cour_id, stck_id),        
+    FOREIGN KEY (cour_id) REFERENCES COURSE(cour_id),
+    FOREIGN KEY (stck_id) REFERENCES STOCK(stck_id)
+);
+
+-- EMPLOYEE  ------------------------------------------------
 
 
--- Filling the tables and testing
 
-	insert into students (student_id, first_name, last_name, age)
-	values
-	    (1, 'John', 'Doe', 20),
-	    (2, 'Emily', 'Smith', 22),
-	    (3, 'Michael', 'Johnson', 21),
-	    (4, 'Sophia', 'Williams', 23),
-	    (5, 'Daniel', 'Brown', 20),
-	    (6, 'Olivia', 'Miller', 21),
-	    (7, 'Alexander', 'Davis', 22),
-	    (8, 'Emma', 'Garcia', 19),
-	    (9, 'William', 'Martinez', 24),
-	    (10, 'Ava', 'Lopez', 20),
-	    (11, 'James', 'Gonzalez', 21),
-	    (12, 'Mia', 'Lee', 23),
-	    (13, 'Benjamin', 'Clark', 22),
-	    (14, 'Avery', 'Hall', 20),
-	    (15, 'Charlotte', 'Young', 19),
-	    (16, 'Ethan', 'King', 24),
-	    (17, 'Lily', 'Hill', 21),
-	    (18, 'Harper', 'Adams', 20),
-	    (19, 'Amelia', 'Wright', 22),
-	    (20, 'Jack', 'Scott', 23),
-	    (21, 'Sophie', 'Green', 19),
-	    (22, 'David', 'Baker', 21),
-	    (23, 'Grace', 'Evans', 22),
-	    (24, 'Logan', 'Morris', 20),
-	    (25, 'Nora', 'Rogers', 23);
-	   
-	insert into active_students (active_student_id)
-	values
-	    (1),
-	    (2);
-	    
-	insert into courses (course_id, course_name, course_minimum_demand_amount_to_open, course_demand_amount)
-	values
-	    ('MAT101', 'Mathematics'         , 10, 0),
-	    ('ENG102', 'English'             , 10, 0),
-	    ('GER103', 'German'              , 10, 0),
-	    ('CHS104', 'Chess'               , 10, 0),
-	    ('RPG106', 'Robotics_Programming', 10, 0);
-	   
-	insert into parents (student_id, first_name, last_name, phone_number, email)
-	values
-	    (1, 'Mete'  , 'Gulsoy', '01234567890', 'mgulsoy@etu.edu.tr'),
-	    (2, 'Hasan' , 'Tuna'  , '01234567890', 'htuna@etu.edu.tr'),
-	    (3, 'Yusuf' , 'Aydin' , '01234567890', 'yaydin@etu.edu.tr'),
-	    (4, 'Ahmed' , 'Kasik' , '01234567890', 'ahmet@etu.edu.tr'),
-	    (5, 'Atilla', 'Ak'    , '01234567890', 'atilla@etu.edu.tr')
-	;
-	 
-	insert into employees (employee_id, salary, first_name, last_name)
-	values
-		(1, 2500, 'Toygar', 'Akgun'),
-		(2, 2500, 'Mehmet Burak', 'Akgun')
-	;
+-- ADMIN_STAFF ------------------------------------------------
+
+create trigger DELETE_ADMIN_STAFF_EMPLOYEE after DELETE on ADMIN_STAFF for each row -- DELETE EMPLOYEE instance of a administrative_staff upon deletion
+		DELETE from EMPLOYEE e where e.empl_id=old.empl_id;
 	
-	insert into instructors (instructor_id)
-	values
-		(1)
-	;
+-- INSTRUCTOR ------------------------------------------------
 	
-	insert into instructor_to_available_hours (instructor_id, available_day, an_available_hour)
-	values
-		(1, 'monday', '13:00:00')
-	;
+#create trigger UPDATE_COURSE_INST before DELETE on INSTRUCTOR for each row -- UPDATE a courses instructor to null when its instructor is deleted
+#		UPDATE COURSE c set c.cour_instructor=null where c.cour_instructor=old.empl_id;
+
+create trigger DELETE_INSTRUCTOR_EMPLOYEE after DELETE on INSTRUCTOR for each row -- DELETE EMPLOYEE instance of a teacher upon deletion
+	DELETE from EMPLOYEE e where e.empl_id=old.empl_id;
+
+create trigger DELETE_INST_AVAIL_HOUR before DELETE on INSTRUCTOR for each row -- DELETE a teachers available hours when he is deleted
+	DELETE from INST_AVAIL_HOUR iah where iah.empl_id=old.empl_id;
+
+
+
+-- STAFF ------------------------------------------------
 	
-	insert into instructor_to_teached_courses (instructor_id, teached_course_id)
-	values
-		(1, 'MAT101')
-	;
-	   
+create trigger DELETE_STAFF_EMPLOYEE after DELETE on STAFF for each row -- DELETE EMPLOYEE instance of a staff upon deletion
+	DELETE from EMPLOYEE e where e.empl_id=old.empl_id;
+
+-- STUDENT ------------------------------------------------
+
+
+
+
+-- ACTIVE ------------------------------------------------
+
+create trigger DELETE_STUD_AVAIL_HOUR before DELETE on ACTIVE for each row -- DELETE a active students available hours when he is deleted
+	DELETE from STUDENT_AVAIL_HOUR sah where sah.stud_id=old.stud_id;
+
+create trigger DELETE_RELATIVE before DELETE on ACTIVE for each row -- DELETE a active students relatives when he is deleted
+	DELETE from RELATIVE r where r.stud_id=old.stud_id;
+
+-- maybe add delete parent if single brother
+ 
+create trigger DELETE_TAKEN_COURSE before DELETE on ACTIVE for each row -- DELETE a active students taken courses when he is deleted
+	DELETE from TAKEN_COURSE tc where tc.stud_id=old.stud_id;
+
+create trigger DELETE_REQUESTED_COURSE before DELETE on ACTIVE for each row -- DELETE a active students requested courses when he is deleted
+	DELETE from REQUESTED_COURSE rc where rc.stud_id=old.stud_id;
+
+-- GRADUATE ------------------------------------------------
+
+create trigger DELETE_GRADUATE_STUDENT after DELETE on GRADUATE for each row -- DELETE a graduate students student when he is deleted
+	DELETE from STUDENT s where s.stud_id=old.stud_id;
+
+-- PARENT ------------------------------------------------
+
+
+
+-- EXPENSE ------------------------------------------------
+
+
+
+-- STOCK ------------------------------------------------
+
+
+
+-- COURSE ------------------------------------------------
    
--- Viewing data
+create trigger DELETE_COURSE_REQUESTED_COURSE before DELETE on COURSE for each row -- DELETE requests of a course when it is deleted
+	DELETE from REQUESTED_COURSE rc where rc.cour_id=old.cour_id;
 
-    select * from parents p ;
+create trigger DELETE_COURSE_TAKEN_COURSE before DELETE on COURSE for each row -- DELETE taken courses of a course when it is deleted
+	DELETE from TAKEN_COURSE tc where tc.cour_id=old.cour_id;
 
-	delete from active_students where active_student_id=1;
+create trigger DELETE_COURSE_ALLOCATED_LECTURE before DELETE on COURSE for each row -- DELETE allocated lectures of a course when it is deleted
+	DELETE from ALLOCATED_LECTURE al where al.cour_id=old.cour_id;
 
-	insert into graduated_students (graduated_student_id)
-	values
-		(2)
-	;
+create trigger DELETE_COURSE_NEEDED_STOCK before DELETE on COURSE for each row -- DELETE needed stocks of a course when it is deleted
+	DELETE from NEEDED_STOCK ns where ns.cour_id=old.cour_id;
 
-    select * from parents p ;
-   
-	delete from graduated_students where graduated_student_id=2;
+-- LECTURE ------------------------------------------------
 
-	delete from instructors where instructor_id=1;
-
-   	select * from instructors t;
-
-	
+create trigger DELETE_LECTURE_ALLOCATED_LECTURE before DELETE on LECTURE for each row -- DELETE allocated lectures of a lecture when it is deleted
+	DELETE from ALLOCATED_LECTURE al where al.lect_id=old.lect_id;
