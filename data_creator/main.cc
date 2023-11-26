@@ -23,7 +23,7 @@ int main(){
     // Engineering departments: CMP 01, EEE 02, MAE 03
     // Medicine departments: MED 01, DEN 02, PHA 03
     // Economics departments: BUS 01, ECO 02, INR 03
-    cout << "INSERT INTO students(stud_id, stud_fname, stud_lname, stud_birthdate, stud_regdate, stud_gpa, stud_email, stud_number) VALUES " << endl;
+    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_year, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
     vector<string> ids;
     for(int i = 0; i < 500; i++){
         string first_name, last_name;
@@ -46,12 +46,12 @@ int main(){
         // Create a random date for registration with reg year being same as entry_year
         int reg_day = rand() % 28 + 1;
         int reg_month = rand() % 9 + 1;
-        string reg_date = to_string(reg_day) + "/" + to_string(reg_month) + "/20" + to_string(entry_year);
+        string reg_date = "20" + to_string(entry_year) + "/" + to_string(reg_month) + "/" + to_string(reg_day);
 
         // Create a random date for birthdate
         int birth_day = rand() % 28 + 1;
         int birth_month = rand() % 12 + 1;
-        string birth_date = to_string(birth_day) + "/" + to_string(birth_month) + "/" + to_string(birth_year);
+        string birth_date = to_string(birth_year) + "/" + to_string(birth_month) + "/" + to_string(birth_day);
 
         //Create gpa 
 
@@ -82,16 +82,16 @@ int main(){
     }
     cout<< ";" << endl << endl;
 
-    cout << "INSERT INTO ACTIVE(stud_id) VALUES (" << endl;
+    cout << "INSERT INTO ACTIVE(stud_id) VALUES " << endl;
     for(string id: ids){
         cout << "(" << id << ")";
         if(id != ids.back()) cout << ",";
         cout << endl;
     }
-    cout << ");" << endl << endl;
+    cout << ";" << endl << endl;
 
 
-    cout << "INSERT INTO students(stud_id, stud_fname, stud_lname, stud_birthdate, stud_regdate, stud_gpa, stud_email, stud_number) VALUES " << endl;
+    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_year, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
     ids.clear();
     for(int i = 0; i < 100; i++){
         string first_name, last_name;
@@ -114,12 +114,12 @@ int main(){
         // Create a random date for registration with reg year being same as entry_year
         int reg_day = rand() % 28 + 1;
         int reg_month = rand() % 9 + 1;
-        string reg_date = to_string(reg_day) + "/" + to_string(reg_month) + "/20" + to_string(entry_year);
+        string reg_date = "20" + to_string(entry_year) + "/" + to_string(reg_month) + "/" + to_string(reg_day);
 
         // Create a random date for birthdate
         int birth_day = rand() % 28 + 1;
         int birth_month = rand() % 12 + 1;
-        string birth_date = to_string(birth_day) + "/" + to_string(birth_month) + "/" + to_string(birth_year);
+        string birth_date = to_string(birth_year) + "/" + to_string(birth_month) + "/" + to_string(birth_day);
 
         //Create gpa 
 
@@ -151,24 +151,24 @@ int main(){
 
     cout<< ";" << endl << endl;
 
-    cout << "INSERT INTO GRADUATE(stud_id, grad_grad_date) VALUES (" << endl;
+    cout << "INSERT INTO GRADUATE(stud_id, grad_grad_date) VALUES " << endl;
     for(string id: ids){
-        cout << "(" << id << ", ";
+        cout << "(" << id;
 
         int entry_year = stoi(id.substr(0, 2));
         int grad_year = entry_year + 4 + rand() % 2;
         int grad_day = rand() % 28 + 1;
         int grad_month = rand() % 9 + 1;
-        string grad_date = to_string(grad_day) + "/" + to_string(grad_month) + "/20" + to_string(grad_year);
+        string grad_date = "20" + to_string(grad_year) + "/" + to_string(grad_month) + "/" + to_string(grad_day);
         cout << ", '" << grad_date << "')";
         if(id != ids.back()) cout << ",";
         cout << endl;
     }
-    cout << ");" << endl << endl;
+    cout << ";" << endl << endl;
 
 
     // Create parents 
-    cout << "INSERT INTO parents(pare_id, pare_fname, pare_lname, pare_sex, pare_email, pare_number) VALUES " << endl;
+    cout << "INSERT INTO PARENT(pare_id, pare_fname, pare_lname, pare_sex, pare_email, pare_number) VALUES " << endl;
     // for every student either put a female parent, male parent or none
     int cnt = 0;
     vector<pair<string, pair<string, string>>> parent_to_student;
@@ -200,8 +200,8 @@ int main(){
 
         string email = first_name + "." + last_name + "@gmail.com";
 
-        cout << cnt + 1 << ", '" << first_name << "', '" << last_name << "', '" << sex << "', '" << email << "', '" << phone_number << "'";
-        if(cnt != 499) cout << ",";
+        cout << "(" << cnt + 1 << ", '" << first_name << "', '" << last_name << "', " << sex << ", '" << email << "', '" << phone_number << "'" << ")";
+        if(cnt != 599) cout << ",";
         cout << endl;
         cnt++;
     }
@@ -209,7 +209,7 @@ int main(){
 
     cout << ";" << endl << endl;
 
-    cout << "INSERT INTO relative(stud_id, pare_id, rela_type) VALUES " << endl;
+    cout << "INSERT INTO RELATIVE(stud_id, pare_id, rela_type) VALUES " << endl;
     for(auto p: parent_to_student){
         cout << "(" << p.second.first << ", " << p.second.second << ", '" << p.first << "')";
         if(p != parent_to_student.back()) cout << ",";
@@ -218,7 +218,7 @@ int main(){
 
     cout << ";" << endl << endl;
 
-    cout << "INSERT INTO EXPENSES(exps_id, exps_date, exps_cost, exps_type) VALUES " << endl;
+    cout << "INSERT INTO EXPENSE(exps_id, exps_name, exps_date, exps_cost, exps_type) VALUES " << endl;
 
     // List some expanses for university management
     vector<string> expense_names = {"Electricity", "Water", "Internet", "Gas", "Cleaning", "Security", "Food", "Salary", "Other"};
@@ -230,10 +230,10 @@ int main(){
             int is_fixed = rand() % 2;
             int expense_date = rand() % 28 + 1;
             int expense_month = rand() % 9 + 1;
-            string date = to_string(expense_date) + "/" + to_string(expense_month) + "/" + to_string(2020 + j);
-            cout << "(" << i*4 + j << ", '" << date << "', " << amount << ", " << is_fixed << ", '" << expense_name << "')";
+            string date = to_string(2020 + j) + "/" + to_string(expense_month) + "/" + to_string(expense_date);
+            cout << "(" << i*4 + j << ", '" << expense_name << "', '" << date << "', " << amount << ", " << is_fixed << ")";
 
-            if(i != 7) cout << ",";
+            if(i != 7 || j != 3) cout << ",";
             cout << endl;
         }
     }
@@ -241,7 +241,7 @@ int main(){
     cout << ";" << endl << endl;
 
 
-    cout << "INSERT INTO EMPLOYEES(empl_id, empl_type, empl_fname, empl_lname, empl_salary, empl_reg_date)" << endl;
+    cout << "INSERT INTO EMPLOYEE(empl_id, empl_type, empl_fname, empl_lname, empl_salary, empl_reg_date) VALUES " << endl;
 
     // Create employees
     vector<pair<string, int>> employee_ids;
@@ -269,7 +269,7 @@ int main(){
         surname >> last_name;
 
         cout << "(" << i + 1 << ", " << rand() % 2 << ", '" << first_name << "', '" << last_name << "', " << salary << ", '";
-        cout << rand() % 28 + 1 << "/" << rand() % 9 + 1 <<  to_string(2015 + rand() % 8) << "')";
+        cout << to_string(2015 + rand() % 8) << "/" << rand() % 9 + 1 << "/" << rand() % 28 + 1 << "')";
         if(i != 99) cout << ",";
         cout << endl;
     }
@@ -290,7 +290,7 @@ int main(){
 
     cout << ";" << endl << endl;
 
-    cout << "INSERT INTO admin_staff(empl_id) VALUES " << endl;
+    cout << "INSERT INTO ADMIN_STAFF(empl_id) VALUES " << endl;
     for(auto emp: employee_ids){
         if(emp.second == 0){
             cout << "(" << emp.first << ")";
@@ -312,6 +312,6 @@ int main(){
     //     }
     // }
 
-    // cout << ";" << endl << endl;
+    cout << ";" << endl << endl;
 
 }
