@@ -29,6 +29,15 @@ namespace _372_project
             DataSet dataSet = new DataSet();
             adapter.Fill(dataSet);
 
+            foreach (DataColumn attribute in dataSet.Tables[0].Columns)
+            {
+                string? name;
+                if(Constants.ATTR_TO_NAME_DICT.TryGetValue(attribute.ColumnName, out name))
+                {
+                    attribute.ColumnName = name;
+                }
+            }
+
             return dataSet;
         }
 
