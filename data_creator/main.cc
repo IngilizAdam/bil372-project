@@ -2,6 +2,7 @@
 
 #include <bits/stdc++.h>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <string>
 #include <sys/types.h>
@@ -13,6 +14,7 @@ unordered_map<string, string> id_to_last_name;
 unordered_map<string, int> next_id;
 int main(){
     freopen("generator.sql", "w", stdout);
+    cout << fixed << setprecision(2);
     srand(time(NULL));
     fstream female_name("first_female_names.txt");
     fstream male_name("first_male_names.txt");
@@ -27,8 +29,8 @@ int main(){
     vector<string> ids;
     for(int i = 0; i < 500; i++){
         string first_name, last_name;
-        int entry_year = rand() % 5 + 14;
-        int birth_year = 2023 - 18 - (23 - entry_year);
+        int entry_year = rand() % 5 + 18;
+        int birth_year = 2023 - 18 - (23 - entry_year) - rand() % 5;
 
 
         string id = to_string(entry_year);
@@ -95,8 +97,8 @@ int main(){
     ids.clear();
     for(int i = 0; i < 100; i++){
         string first_name, last_name;
-        int entry_year = rand() % 5 + 14;
-        int birth_year = 2023 - 18 - (23 - entry_year);
+        int entry_year = rand() % 5 + 13;
+        int birth_year = 2023 - 18 - (23 - entry_year) - rand() % 5;
 
 
         string id = to_string(entry_year);
@@ -143,8 +145,8 @@ int main(){
 
         id_to_last_name[id] = last_name;
         ids.push_back(id);
-        cout << "(" << id << ", '" << first_name << "', '" << last_name << "', '";
-        cout<< birth_date << "', '" << reg_date << "', " << gpa << ", '" << email << "', '" << phone_number << "')"; 
+       cout << "(" << id << ", '" << first_name << "', '" << last_name << "', '";
+        cout<< birth_date << "', " << sex << ", '" << reg_date << "', " << gpa << ", '" << email << "', '" << phone_number << "')"; 
         if(i != 99) cout << ",";
         cout << endl;
     }
@@ -250,9 +252,9 @@ int main(){
         string first_name, last_name;
         int salary; 
         if(employee_ids.back().second)
-            salary = rand() % 10000 + 1000;
+            salary = 100 * (rand() % 100) + 1000;
         else
-            salary = rand() % 10000 + 10000;
+            salary = 100 * (rand() % 100) + 10000;
 
         bool sex = rand() % 2;
 
