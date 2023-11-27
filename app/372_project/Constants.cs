@@ -150,5 +150,11 @@ namespace _372_project
             {"EXPENSE", new List<ComboboxKeyValuePair>()},
             {"STOCK", new List<ComboboxKeyValuePair>()},
         };
+
+        public static Dictionary<string, string> JOIN_ATTR_DICT = new Dictionary<string, string>()
+        {
+            { "STUDENT",  "stud_id" },
+            { "EMPLOYEE", "empl_id" },
+        };
     }
 }

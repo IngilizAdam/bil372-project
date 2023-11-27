@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Diagnostics;
 using MySqlConnector;
 
 namespace _372_project
@@ -22,6 +23,7 @@ namespace _372_project
 
         public static DataSet selectCommand(string command)
         {
+            Debug.WriteLine(command);
             if (!isConnectionReady())
                 setConnection();
 
@@ -41,6 +43,16 @@ namespace _372_project
             }
 
             return dataSet;
+        }
+
+        public static int insertCommand(string command)
+        {
+            Debug.WriteLine(command);
+            if (!isConnectionReady())
+                setConnection();
+
+            MySqlCommand cmd = new MySqlCommand(command, connection);
+            return cmd.ExecuteNonQuery();
         }
 
         private static void closeConnection()

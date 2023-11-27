@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace _372_project
 {
-    class ComboboxKeyValuePair
+    public class ComboboxKeyValuePair
     {
         public string Key { get; set; }
         public string Value { get; set; }

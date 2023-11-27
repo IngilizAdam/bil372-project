@@ -59,8 +59,13 @@
         <TextBlock Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20">Kategori 1</TextBlock>
         <ComboBox x:Name="category1" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" SelectionChanged="category1_selectionChanged"/>
 
-        <TextBlock x:Name="category2TextBlock" Grid.Column="4" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20" Visibility="Hidden">Kategori 2</TextBlock>
-        <ComboBox x:Name="category2" Grid.Column="4" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" Visibility="Hidden" SelectionChanged="category2_SelectionChanged"/>
-        
+        <TextBlock x:Name="category2TextBlock" Grid.Column="4" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20">Kategori 2</TextBlock>
+        <ComboBox x:Name="category2" Grid.Column="4" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" SelectionChanged="category2_SelectionChanged"/>
+
+        <Button x:Name="ekleButton" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,9,0,9" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="2" Click="Ekle_Button_Click">
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
+                <TextBlock Margin="0,10,0,10"> &lt;- Geri</TextBlock>
+            </Viewbox>
+        </Button>
     </Grid>
 </Page>
