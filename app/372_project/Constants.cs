@@ -115,5 +115,40 @@ namespace _372_project
 
             {"İhtiyaç Duyulan Miktar", "need_amount"   },
         };
+
+        public static List<ComboboxKeyValuePair> CATEGORY1_LIST = new List<ComboboxKeyValuePair>()
+        {
+            new ComboboxKeyValuePair("Öğrenci", "STUDENT"),
+            new ComboboxKeyValuePair("Veli", "PARENT"),
+            new ComboboxKeyValuePair("Çalışan", "EMPLOYEE"),
+            new ComboboxKeyValuePair("Ders", "COURSE"),
+            new ComboboxKeyValuePair("Harcama", "EXPENSE"),
+            new ComboboxKeyValuePair("Stok", "STOCK"),
+        };
+
+        public static List<ComboboxKeyValuePair> CATEGORY2_STUDENT_LIST = new List<ComboboxKeyValuePair>()
+        {
+            new ComboboxKeyValuePair("Tüm Öğrenciler", "STUDENT"),
+            new ComboboxKeyValuePair("Aktif Öğrenci", "ACTIVE"),
+            new ComboboxKeyValuePair("Mezun Öğrenci", "GRADUATE"),
+        };
+
+        public static List<ComboboxKeyValuePair> CATEGORY2_EMPLOYEE_LIST = new List<ComboboxKeyValuePair>()
+        {
+            new ComboboxKeyValuePair("Tüm Çalışanlar", "EMPLOYEE"),
+            new ComboboxKeyValuePair("Öğretim Görevlisi", "INSTRUCTOR"),
+            new ComboboxKeyValuePair("Temizlik Görevlisi", "STAFF"),
+            new ComboboxKeyValuePair("İdari Personel", "ADMIN_STAFF"),
+        };
+
+        public static Dictionary<string, List<ComboboxKeyValuePair>> CATEGORY1_TO_2_DICT = new Dictionary<string, List<ComboboxKeyValuePair>>()
+        {
+            {"STUDENT", CATEGORY2_STUDENT_LIST},
+            {"PARENT", new List<ComboboxKeyValuePair>()},
+            {"EMPLOYEE", CATEGORY2_EMPLOYEE_LIST},
+            {"COURSE", new List<ComboboxKeyValuePair>()},
+            {"EXPENSE", new List<ComboboxKeyValuePair>()},
+            {"STOCK", new List<ComboboxKeyValuePair>()},
+        };
     }
 }

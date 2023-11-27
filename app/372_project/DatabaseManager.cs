@@ -4,13 +4,14 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using MySqlConnector;
 
 namespace _372_project
 {
     class DatabaseManager
     {
-        private static MySqlConnection connection;
+        private static MySqlConnection? connection;
 
         private static void setConnection()
         {
@@ -27,6 +28,7 @@ namespace _372_project
             MySqlCommand cmd = new MySqlCommand(command, connection);
             MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
             DataSet dataSet = new DataSet();
+
             adapter.Fill(dataSet);
 
             foreach (DataColumn attribute in dataSet.Tables[0].Columns)
@@ -49,7 +51,7 @@ namespace _372_project
 
         private static bool isConnectionReady()
         {
-            return connection != null && connection.State == System.Data.ConnectionState.Open;
+            return (connection != null && connection.State == System.Data.ConnectionState.Open);
         }
     }
 }
