@@ -17,25 +17,19 @@ using System.Windows.Shapes;
 namespace _372_project
 {
     /// <summary>
-    /// Interaction logic for PageMain.xaml
+    /// Interaction logic for PageEkle.xaml
     /// </summary>
-    public partial class PageMain : Page
+    public partial class PageEkle : Page
     {
-        public PageMain()
+        public PageEkle()
         {
             InitializeComponent();
         }
 
-        private void Sorgula_Button_Click(object sender, RoutedEventArgs e)
+        private void Geri_Button_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("SorgulaButtonClick");
-            Application.Current.MainWindow.Content = new PageSorgula();
-        }
-
-        private void Ekle_Button_Click(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("EkleButtonClick");
-            Application.Current.MainWindow.Content = new PageEkle();
+            Debug.WriteLine("GeriButtonClick");
+            Application.Current.MainWindow.Content = new PageMain();
         }
     }
 }

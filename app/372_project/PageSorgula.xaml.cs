@@ -25,23 +25,23 @@ namespace _372_project
     /// </summary>
     public partial class PageSorgula : Page
     {
-        List<ComboboxKeyValuePair> category1List = new List<ComboboxKeyValuePair>();
+        private Grid filterTextBoxesGrid = new Grid();
+        private List<TextBox> textBoxes = new List<TextBox>();
+        private List<TextBlock> textBlocks = new List<TextBlock>();
 
-        Grid filterTextBoxesGrid = new Grid();
-        List<TextBox> textBoxes = new List<TextBox>();
-        List<TextBlock> textBlocks = new List<TextBlock>();
+        private DataSet dataSet = new DataSet();
+
+        private int categoryLevel = 0;
+        List<ComboBox> categoryComboBoxes = new List<ComboBox>();
 
         public PageSorgula()
         {
             InitializeComponent();
-            category1List.Add(new ComboboxKeyValuePair("Öğrenci", "STUDENT"));
-            category1List.Add(new ComboboxKeyValuePair("Veli", "PARENT"));
-            category1List.Add(new ComboboxKeyValuePair("Çalışan", "EMPLOYEE"));
-            category1List.Add(new ComboboxKeyValuePair("Ders", "COURSE"));
-            category1List.Add(new ComboboxKeyValuePair("Harcama", "EXPENSE"));
-            category1List.Add(new ComboboxKeyValuePair("Stok", "STOCK"));
 
-            category1.ItemsSource = category1List;
+            category1.ItemsSource = Constants.CATEGORY1_LIST;
+
+            categoryComboBoxes.Add(category1);
+            categoryComboBoxes.Add(category2);
         }
 
         private void Geri_Button_Click(object sender, RoutedEventArgs e)
@@ -50,15 +50,134 @@ namespace _372_project
             Application.Current.MainWindow.Content = new PageMain();
         }
 
-        private void comboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void category1_selectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // ignore if changed from code
+            if (e.AddedItems.Count == 0)
+                return;
+
+            categoryLevel = 0;
             ComboboxKeyValuePair selection = (ComboboxKeyValuePair) e.AddedItems[0];
             Debug.WriteLine(selection.Value);
             
-            DataSet dataSet = DatabaseManager.selectCommand("SELECT * FROM " + selection.Value);
-            dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
+            setupTableWithFilters(selection);
 
-            for(int i = 0; i < textBoxes.Count; i++)
+            initCategory2ComboBox(selection.Value);
+        }
+
+        private void category2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // ignore if changed from code
+            if (e.AddedItems.Count == 0)
+                return;
+
+            categoryLevel = 1;
+            ComboboxKeyValuePair selection = (ComboboxKeyValuePair) e.AddedItems[0];
+            Debug.WriteLine(selection.Value);
+
+            setupTableWithFilters(selection);
+        }
+
+        private void initCategory2ComboBox(string parent)
+        {
+            category2.Visibility = Visibility.Hidden;
+            category2TextBlock.Visibility = Visibility.Hidden;
+            List<ComboboxKeyValuePair> category2List = Constants.CATEGORY1_TO_2_DICT[parent];
+            category2.ItemsSource = category2List;
+            if(category2List.Count > 0)
+            {
+                category2.SelectedIndex = 0;
+                category2.Visibility = Visibility.Visible;
+                category2TextBlock.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void filter_textbox_key_down(object sender, KeyEventArgs e)
+        {
+            if (e.Key.Equals(Key.Enter))
+            {
+                string command = "";
+
+                int conditionCount = 0;
+                for (int i = 0; i < textBoxes.Count; i++)
+                {
+                    string text = textBoxes[i].Text.Trim();
+
+                    if (text.Length > 0)
+                    {
+                        if (conditionCount > 0)
+                            command += " AND";
+                        conditionCount++;
+
+                        text = text.ToUpper();
+
+                        Regex regex = new Regex("(AND)|(OR)");
+
+                        string[] conditions = regex.Split(text);
+                        for(int j = 0; j < conditions.Length; j++)
+                        {
+                            string condition = conditions[j].Trim();
+
+                            if(condition.Equals("AND") || condition.Equals("OR"))
+                            {
+                                command += (" " + condition);
+                                continue;
+                            }
+
+                            if (!condition[0].Equals('<') && !condition[0].Equals('>') && !condition[0].Equals('='))
+                                condition = "=" + condition;
+
+                            condition = condition[0] + condition.Substring(1).Trim();
+
+                            string attributeName = "";
+                            foreach (DataColumn attribute in dataSet.Tables[0].Columns)
+                            {
+                                attributeName = attribute.ColumnName;
+                                Constants.NAME_TO_ATTR_DICT.TryGetValue(attributeName, out attributeName);
+                                if (attributeName.Equals(textBoxes[i].Name))
+                                {
+                                    if(attribute.DataType == typeof(string) || attribute.DataType == typeof(DateTime))
+                                    {
+                                        condition = condition[0] + "'" + condition.Substring(1) + "'";
+                                    }
+                                    
+                                    break;
+                                }
+                            }
+
+                            command += (" " + attributeName + condition);
+                        }
+                    }
+                }
+
+                if (conditionCount > 0)
+                {
+                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel].SelectedItem)).Value + " WHERE" + command;
+                }
+                else
+                {
+                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel].SelectedItem)).Value;
+                }
+
+                Debug.WriteLine(command);
+                try
+                {
+                    dataSet = DatabaseManager.selectCommand(command);
+                    setDataGridSource(dataSet);
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("Yanlış bir veri tipi girildi.", "Hata");
+                }
+            }
+        }
+
+        private void setupTableWithFilters(ComboboxKeyValuePair selection)
+        {
+            dataSet = DatabaseManager.selectCommand("SELECT * FROM " + selection.Value);
+            setDataGridSource(dataSet);
+
+            for (int i = 0; i < textBoxes.Count; i++)
             {
                 filterTextBoxesGrid.Children.Remove(textBoxes[i]);
                 filterTextBoxesGrid.Children.Remove(textBlocks[i]);
@@ -93,64 +212,18 @@ namespace _372_project
             }
         }
 
-        private void filter_textbox_key_down(object sender, KeyEventArgs e)
+        private void setDataGridSource(DataSet dataSet)
         {
-            if (e.Key.Equals(Key.Enter))
+            dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
+
+            for (int i = 0; i < dataSet.Tables[0].Columns.Count; i++)
             {
-                string command = "";
-
-                if (category1.SelectedItem == null)
+                DataColumn attribute = dataSet.Tables[0].Columns[i];
+                if (attribute.DataType == typeof(DateTime))
                 {
-                    MessageBox.Show("Lütfen bir kategori seçiniz.");
-                    return;
+                    DataGridTextColumn column = (DataGridTextColumn)dataGrid.Columns[i];
+                    column.Binding.StringFormat = "yyyy/MM/dd";
                 }
-
-                int conditionCount = 0;
-                for (int i = 0; i < textBoxes.Count; i++)
-                {
-                    string text = textBoxes[i].Text.Trim();
-
-                    if (text.Length > 0)
-                    {
-                        if (conditionCount > 0)
-                            command += " AND";
-                        conditionCount++;
-
-                        text = text.ToUpper();
-
-                        Regex regex = new Regex("(AND)|(OR)");
-
-                        string[] conditions = regex.Split(text);
-                        for(int j = 0; j < conditions.Length; j++)
-                        {
-                            string condition = conditions[j].Trim();
-
-                            if(condition.Equals("AND") || condition.Equals("OR"))
-                            {
-                                command += (" " + condition);
-                                continue;
-                            }
-
-                            if (!condition[0].Equals('<') && !condition[0].Equals('>') && !condition[0].Equals('='))
-                                condition = "=" + condition;
-
-                            command += (" " + textBoxes[i].Name + condition);
-                        }
-                    }
-                }
-
-                if (conditionCount > 0)
-                {
-                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)category1.SelectedItem).Value + " WHERE" + command;
-                }
-                else
-                {
-                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)category1.SelectedItem).Value;
-                }
-
-                Debug.WriteLine(command);
-                DataSet dataSet = DatabaseManager.selectCommand(command);
-                dataGrid.ItemsSource = dataSet.Tables[0].DefaultView;
             }
         }
     }
