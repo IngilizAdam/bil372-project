@@ -31,7 +31,7 @@ namespace _372_project
 
         private DataSet dataSet = new DataSet();
 
-        private int categoryLevel = 0;
+        public int categoryLevel = 0;
         List<ComboBox> categoryComboBoxes = new List<ComboBox>();
 
         public PageSorgula()
@@ -42,6 +42,11 @@ namespace _372_project
 
             categoryComboBoxes.Add(category1);
             categoryComboBoxes.Add(category2);
+
+            category2.Visibility = Visibility.Hidden;
+            category2TextBlock.Visibility = Visibility.Hidden;
+
+            ekleButton.Visibility = Visibility.Hidden;
         }
 
         private void Geri_Button_Click(object sender, RoutedEventArgs e)
@@ -61,8 +66,8 @@ namespace _372_project
             Debug.WriteLine(selection.Value);
             
             setupTableWithFilters(selection);
-
-            initCategory2ComboBox(selection.Value);
+            
+            initCategory2ComboBox(selection);
         }
 
         private void category2_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -76,19 +81,35 @@ namespace _372_project
             Debug.WriteLine(selection.Value);
 
             setupTableWithFilters(selection);
+
+            if(category2.SelectedIndex != 0)
+            {
+                ekleButton.Visibility = Visibility.Visible;
+                ekleButton.Content = selection.Key + " Ekle";
+            }
+            else
+            {
+                ekleButton.Visibility = Visibility.Hidden;
+            }
         }
 
-        private void initCategory2ComboBox(string parent)
+        private void initCategory2ComboBox(ComboboxKeyValuePair parent)
         {
             category2.Visibility = Visibility.Hidden;
             category2TextBlock.Visibility = Visibility.Hidden;
-            List<ComboboxKeyValuePair> category2List = Constants.CATEGORY1_TO_2_DICT[parent];
+            List<ComboboxKeyValuePair> category2List = Constants.CATEGORY1_TO_2_DICT[parent.Value];
             category2.ItemsSource = category2List;
             if(category2List.Count > 0)
             {
+                ekleButton.Visibility = Visibility.Hidden;
                 category2.SelectedIndex = 0;
                 category2.Visibility = Visibility.Visible;
                 category2TextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ekleButton.Visibility = Visibility.Visible;
+                ekleButton.Content = parent.Key + " Ekle";
             }
         }
 
@@ -174,7 +195,17 @@ namespace _372_project
 
         private void setupTableWithFilters(ComboboxKeyValuePair selection)
         {
-            dataSet = DatabaseManager.selectCommand("SELECT * FROM " + selection.Value);
+            if (categoryLevel == 1 && categoryComboBoxes[categoryLevel].SelectedIndex != 0)
+            {
+                ComboboxKeyValuePair parent = ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel - 1].SelectedItem));
+                string attrName = Constants.JOIN_ATTR_DICT[parent.Value];
+                dataSet = DatabaseManager.selectCommand("SELECT * FROM " + parent.Value + " JOIN " + selection.Value + " USING(" + attrName + ")");
+            }
+            else
+            {
+                dataSet = DatabaseManager.selectCommand("SELECT * FROM " + selection.Value);
+            }
+
             setDataGridSource(dataSet);
 
             for (int i = 0; i < textBoxes.Count; i++)
@@ -225,6 +256,13 @@ namespace _372_project
                     column.Binding.StringFormat = "yyyy/MM/dd";
                 }
             }
+        }
+
+        
+        private void Ekle_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowEkle popup = new WindowEkle((ComboboxKeyValuePair)category1.SelectedItem, (ComboboxKeyValuePair)category2.SelectedItem, categoryLevel, dataSet);
+            popup.Show();
         }
     }
 }
