@@ -15,6 +15,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace _372_project
 {
@@ -23,35 +24,66 @@ namespace _372_project
     /// </summary>
     public partial class WindowEkle : Window
     {
-        private ComboboxKeyValuePair category1;
-        private ComboboxKeyValuePair category2;
-        private int categoryLevel;
-        private DataSet dataSet;
         private Window window;
+
+        int mode = 0;
+
+        private DataSet dataSet1;
+        private DataSet dataSet2;
+        private DataSet dataSetJoined;
+
+        private string tableName1;
+        private string tableName2;
 
         private List<TextBox> textBoxes = new List<TextBox>();
         private List<TextBlock> textBlocks = new List<TextBlock>();
         private Grid filterTextBoxesGrid = new Grid();
 
-        public WindowEkle(ComboboxKeyValuePair category1, ComboboxKeyValuePair category2, int categoryLevel, DataSet dataSet, Window window)
+        public WindowEkle(Window window)
         {
             InitializeComponent();
 
-            this.category1 = category1;
-            this.category2 = category2;
-            this.categoryLevel = categoryLevel;
-            this.dataSet = dataSet;
             this.window = window;
+
+            setupControls();
+        }
+
+        private void setupControls()
+        {
+            combobox_veri_tipi.ItemsSource = Constants.NAME_TO_TABLE;
+        }
+
+        private void combobox_veri_tipi_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count == 0)
+                return;
+
+            mode = 0;
+            ComboboxKeyValuePair selected = (ComboboxKeyValuePair)combobox_veri_tipi.SelectedItem;
+
+            tableName1 = selected.Value;
+            tableName2 = selected.Value2;
+            string joinCommand = selected.Command;
+
+            dataSet1 = DatabaseManager.selectCommand("SELECT * FROM " + tableName1 + " LIMIT 0");
+            if((tableName2.Length > 0) && (joinCommand.Length > 0))
+            {
+                dataSet2 = DatabaseManager.selectCommand("SELECT * FROM " + tableName2 + " LIMIT 0");
+                dataSetJoined = DatabaseManager.selectCommand("SELECT * FROM " + tableName1 + " " + joinCommand + " LIMIT 0");
+                mode = 1;
+            }
 
             setupTextBoxes();
         }
 
         private void setupTextBoxes()
         {
-            //Grid.SetRow(filterTextBoxesGrid, 0);
-            //Grid.SetColumn(filterTextBoxesGrid, 2);
-            //Grid.SetColumnSpan(filterTextBoxesGrid, 7);
-            //grid.Children.Add(filterTextBoxesGrid);
+            DataSet dataSet = (mode == 0) ? dataSet1 : dataSetJoined;
+
+            textBoxes.Clear();
+            textBlocks.Clear();
+            filterTextBoxesGrid.Children.Clear();
+            filterTextBoxesGrid = new Grid();
 
             filter_scrollviewer.Content = filterTextBoxesGrid;
 
@@ -81,212 +113,95 @@ namespace _372_project
                 textBoxes.Add(textBox);
                 textBlocks.Add(textBlock);
             }
-            //Grid.SetRowSpan(filterTextBoxesGrid, rowCount+2);
-
-            Button ekleButton = new Button();
-            ekleButton.Content = "Ekle";
-            ekleButton.HorizontalAlignment = HorizontalAlignment.Stretch;
-            Grid.SetRow(ekleButton, 13);
-            Grid.SetColumn(ekleButton, 4);
-            Grid.SetColumnSpan(ekleButton, 3);
-            grid.Children.Add(ekleButton);
-
-            ekleButton.Click += new RoutedEventHandler(Ekle_Button_Click);
         }
 
-        private void Ekle_Button_Click(object sender, RoutedEventArgs e)
+        private void button_ekle_click(object sender, RoutedEventArgs e)
         {
-            if(categoryLevel == 1)
+            string command = "START TRANSACTION;";
+
             {
-                if (category1.Value.Equals("STUDENT"))
+                string attributes = tableName1 + "(";
+                string values = "VALUES(";
+
+                for(int i = 0; i < textBoxes.Count; i++)
                 {
+                    string attributeValue = textBoxes[i].Text.Trim();
+                    if (attributeValue.Length == 0)
+                        continue;
+
+                    string attributeName = textBoxes[i].Name;
+
+                    foreach (DataColumn attribute in dataSet1.Tables[0].Columns)
                     {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-                    
-                        for(int i = 0; i < textBoxes.Count; i++)
+                        string columnName = attribute.ColumnName;
+                        Constants.NAME_TO_ATTR_DICT.TryGetValue(columnName, out columnName);
+                        if (columnName.Equals(attributeName))
                         {
-                            if (!textBoxes[i].Name.Equals("grad_grad_date"))
-                                subListTextBox.Add(textBoxes[i]);
-                            else
+                            if (attribute.DataType == typeof(string) || attribute.DataType == typeof(DateTime))
                             {
-                                Regex regex = new Regex(@"^\d{4}[-\/](0?[1-9]|1[012])[-\/](0?[1-9]|[12][0-9]|3[01])$");
-                                if (!regex.IsMatch(textBoxes[i].Text.Trim()))
-                                {
-                                    MessageBox.Show("Hata: Ekleme işlemi başarısız oldu.");
-                                    return;
-                                }
-                                textBoxes[i].Text = textBoxes[i].Text.Trim().Replace("-", "/");
+                                attributeValue = "'" + attributeValue + "'";
                             }
+                
+                            attributes += attributeName + ", ";
+                            values += attributeValue + ", ";
+
+                            break;
                         }
-                        
-                        if(!insertValue(category1.Value, subListTextBox))
-                            return;
                     }
 
-                    if (category2.Value.Equals("ACTIVE"))
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            if (textBoxes[i].Name.Equals("stud_id"))
-                                subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (insertValue(category2.Value, subListTextBox))
-                        {
-                            MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                        }
-                        
-                        return;
-                    }
-                    else if (category2.Value.Equals("GRADUATE"))
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            if (textBoxes[i].Name.Equals("stud_id") || textBoxes[i].Name.Equals("grad_grad_date"))
-                                subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (insertValue(category2.Value, subListTextBox))
-                        {
-                            MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                        }
-
-                        return;
-                    }
                 }
-                else if (category1.Value.Equals("EMPLOYEE"))
-                {
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
 
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (!insertValue(category1.Value, subListTextBox))
-                            return;
-                    }
-
-                    if (category2.Value.Equals("INSTRUCTOR"))
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            if (textBoxes[i].Name.Equals("empl_id"))
-                                subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (insertValue(category2.Value, subListTextBox))
-                        {
-                            MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                        }
-
-                        return;
-                    }
-                    else if (category2.Value.Equals("STAFF"))
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            if (textBoxes[i].Name.Equals("empl_id"))
-                                subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (insertValue(category2.Value, subListTextBox))
-                        {
-                            MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                        }
-
-                        return;
-                    }
-                    else if (category2.Value.Equals("ADMIN_STAFF"))
-                    {
-                        List<TextBox> subListTextBox = new List<TextBox>();
-
-                        for (int i = 0; i < textBoxes.Count; i++)
-                        {
-                            if (textBoxes[i].Name.Equals("empl_id"))
-                                subListTextBox.Add(textBoxes[i]);
-                        }
-
-                        if (insertValue(category2.Value, subListTextBox))
-                        {
-                            MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                        }
-
-                        return;
-                    }
-                }
+                command += " INSERT INTO " + attributes.Substring(0, attributes.Length - 2) + ") " + values.Substring(0, values.Length - 2) + ");";
             }
-            else
+
+            if(mode == 1)
             {
-                if (insertValue(category1.Value, textBoxes))
+                string attributes = tableName2 + "(";
+                string values = "VALUES(";
+
+                for (int i = 0; i < textBoxes.Count; i++)
                 {
-                    MessageBox.Show("Ekleme işlemi başarılı oldu.");
-                }
+                    string attributeValue = textBoxes[i].Text.Trim();
+                    if (attributeValue.Length == 0)
+                        continue;
 
-                return;
-            }
-        }
+                    string attributeName = textBoxes[i].Name;
 
-        private bool insertValue(string tableName, List<TextBox> textBoxList)
-        {
-            string command = "INSERT INTO " + tableName + " (";
-            string values = " VALUES (";
-            for (int i = 0; i < textBoxList.Count; i++)
-            {
-                TextBox textBox = textBoxList[i];
-                string attributeName = textBox.Name;
-                string attributeValue = textBox.Text.Trim();
-
-                if (attributeValue.Equals(""))
-                    continue;
-
-                foreach (DataColumn attribute in dataSet.Tables[0].Columns)
-                {
-                    string columnName = attribute.ColumnName;
-                    Constants.NAME_TO_ATTR_DICT.TryGetValue(columnName, out columnName);
-                    if (columnName.Equals(attributeName))
+                    foreach (DataColumn attribute in dataSet2.Tables[0].Columns)
                     {
-                        if (attribute.DataType == typeof(string) || attribute.DataType == typeof(DateTime))
+                        string columnName = attribute.ColumnName;
+                        Constants.NAME_TO_ATTR_DICT.TryGetValue(columnName, out columnName);
+                        if (columnName.Equals(attributeName))
                         {
-                            attributeValue = "'" + attributeValue + "'";
-                        }
+                            if (attribute.DataType == typeof(string) || attribute.DataType == typeof(DateTime))
+                            {
+                                attributeValue = "'" + attributeValue + "'";
+                            }
 
-                        break;
+                            attributes += attributeName + ", ";
+                            values += attributeValue + ", ";
+
+                            break;
+                        }
                     }
                 }
 
-                command += attributeName + ", ";
-                values += attributeValue + ", ";
+                command += " INSERT INTO " + attributes.Substring(0, attributes.Length - 2) + ") " + values.Substring(0, values.Length - 2) + ");";
             }
-
-            command = command.Substring(0, command.Length - 2);
-            values = values.Substring(0, values.Length - 2);
-            command += ")";
-            values += ")";
-            command += values;
 
             try
             {
-                int row = DatabaseManager.insertCommand(command);
-                if (row == 0) throw new Exception();
-            }
-            catch (Exception)
+                int rowCount = DatabaseManager.insertCommand(command);
+                if (rowCount == 0) throw new Exception();
+            } catch(Exception)
             {
+                DatabaseManager.rollback();
                 MessageBox.Show("Hata: Ekleme işlemi başarısız oldu.");
-
-                return false;
+                return;
             }
 
-            return true;
+            DatabaseManager.commit();
+            MessageBox.Show("Veri başarıyla eklendi");
         }
 
         private void Window_Closed(object sender, EventArgs e)

@@ -51,8 +51,6 @@ namespace _372_project
 
             category3.Visibility = Visibility.Hidden;
             category3TextBlock.Visibility = Visibility.Hidden;
-
-            ekleButton.Visibility = Visibility.Hidden;
         }
 
         private void Geri_Button_Click(object sender, RoutedEventArgs e)
@@ -93,16 +91,6 @@ namespace _372_project
 
             setupTableWithFilters(selection);
 
-            if(category2.SelectedIndex != 0)
-            {
-                ekleButton.Visibility = Visibility.Visible;
-                ekleButton.Content = selection.Key + " Ekle";
-            }
-            else
-            {
-                ekleButton.Visibility = Visibility.Hidden;
-            }
-
             initCategory3ComboBox(selection);
         }
 
@@ -117,15 +105,6 @@ namespace _372_project
             Debug.WriteLine(selection.Value);
 
             setupTableWithFilters(selection);
-
-            if (category3.SelectedIndex != 0)
-            {
-                ekleButton.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                ekleButton.Visibility = Visibility.Visible;
-            }
         }
 
         private void initCategory2ComboBox(ComboboxKeyValuePair parent)
@@ -135,16 +114,6 @@ namespace _372_project
             category2.SelectedIndex = 0;
             category2.Visibility = Visibility.Visible;
             category2TextBlock.Visibility = Visibility.Visible;
-
-            if(category2List.Count > 1)
-            {
-                ekleButton.Visibility = Visibility.Hidden;
-            }
-            else
-            {
-                ekleButton.Visibility = Visibility.Visible;
-                ekleButton.Content = parent.Key + " Ekle";
-            }
         }
 
         private void initCategory3ComboBox(ComboboxKeyValuePair parent)
@@ -154,15 +123,6 @@ namespace _372_project
             category3.SelectedIndex = 0;
             category3.Visibility = Visibility.Visible;
             category3TextBlock.Visibility = Visibility.Visible;
-
-            if (category3List.Count > 1)
-            {
-                
-            }
-            else
-            {
-                ekleButton.Content = parent.Key + " Ekle";
-            }
         }
 
         private void filter_textbox_key_down(object sender, KeyEventArgs e)
@@ -329,7 +289,7 @@ namespace _372_project
 
         private void Ekle_Button_Click(object sender, RoutedEventArgs e)
         {
-            WindowEkle popup = new WindowEkle((ComboboxKeyValuePair)category1.SelectedItem, (ComboboxKeyValuePair)category2.SelectedItem, categoryLevel, dataSet, Window.GetWindow(this));
+            WindowEkle popup = new WindowEkle(Window.GetWindow(this));
             popup.Show();
             Window.GetWindow(this).IsEnabled = false;
         }
