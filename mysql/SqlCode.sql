@@ -71,7 +71,7 @@ CREATE TABLE ACTIVE (
 
 CREATE TABLE GRADUATE (
     stud_id        INT,
-    grad_grad_date DATE,
+    grad_grad_date DATE   NOT NULL,
 
     PRIMARY KEY (stud_id),
     FOREIGN KEY (stud_id) REFERENCES STUDENT(stud_id)
