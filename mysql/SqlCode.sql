@@ -53,7 +53,7 @@ CREATE TABLE STUDENT (
     stud_birth_year DATE,
     stud_sex      	BOOL,
     stud_reg_date 	DATE        NOT NULL,
-    stud_gpa      	FLOAT         NOT NULL,
+    stud_gpa      	FLOAT       NOT NULL,
     stud_email    	VARCHAR(32) NOT NULL,
     stud_number   	CHAR(11)    NOT NULL,
     
@@ -78,7 +78,7 @@ CREATE TABLE GRADUATE (
 );
 
 CREATE TABLE PARENT (
-    pare_id     INT,
+    pare_id     INT         AUTO_INCREMENT,
     pare_fname  VARCHAR(12) NOT NULL,
     pare_lname  VARCHAR(12) NOT NULL,
     pare_sex    BOOL,
@@ -89,7 +89,7 @@ CREATE TABLE PARENT (
 );
 
 CREATE TABLE EXPENSE (
-    exps_id INT,
+    exps_id   INT         AUTO_INCREMENT,
     exps_name VARCHAR(12) NOT NULL,
     exps_date DATE        NOT NULL,
     exps_cost INT         NOT NULL,
@@ -101,7 +101,7 @@ CREATE TABLE EXPENSE (
 );
 
 CREATE TABLE STOCK (
-    stck_id    INT,
+    stck_id    INT         AUTO_INCREMENT,
     stck_name  VARCHAR(12) NOT NULL,
     stck_count INT         NOT NULL,
     
@@ -111,25 +111,12 @@ CREATE TABLE STOCK (
 );
 
 CREATE TABLE COURSE (
-    cour_id         INT,
+    cour_id         CHAR(6),
     cour_min_req    INT,
-    cour_instructor INT not null,
     
     CHECK (cour_min_req >= 0),
     
-    PRIMARY KEY (cour_id),
-    FOREIGN KEY (cour_instructor) REFERENCES INSTRUCTOR(empl_id)
-);
-
-CREATE TABLE LECTURE (
-    lect_id   INT,
-    lect_hour INT NOT NULL,
-    lect_day  INT NOT NULL,
-    
-    CHECK (lect_hour >= 0 AND lect_hour <= 23),
-    CHECK (lect_day >= 0 AND lect_day <= 6),
-    
-    PRIMARY KEY(lect_id)
+    PRIMARY KEY (cour_id)
 );
 
 -- ----------------------------------------------------------------------------
@@ -158,6 +145,18 @@ CREATE TABLE INST_AVAIL_HOUR (
     FOREIGN KEY (empl_id) REFERENCES INSTRUCTOR(empl_id)
 );
 
+CREATE TABLE COUR_HOUR (
+    cour_id   CHAR(6),
+    cour_hour INT,
+    cour_day  INT,
+    
+    CHECK (cour_hour >= 0 AND cour_hour <= 23),
+    CHECK (cour_day >= 0 AND cour_day <= 6),
+    
+    PRIMARY KEY (cour_id, cour_hour, cour_day),
+    FOREIGN KEY (cour_id) REFERENCES COURSE(cour_id)
+);
+
 CREATE TABLE RELATIVE (
     stud_id   INT,
     pare_id   INT,
@@ -168,9 +167,18 @@ CREATE TABLE RELATIVE (
     FOREIGN KEY (pare_id) REFERENCES PARENT(pare_id)
 );
 
+CREATE TABLE GIVEN_COURSE (
+    inst_id INT,
+    cour_id CHAR(6),
+    
+    PRIMARY KEY(cour_id),
+    FOREIGN KEY(inst_id) REFERENCES INSTRUCTOR(empl_id),
+    FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id)
+);
+
 CREATE TABLE REQUESTED_COURSE (
     stud_id INT,
-    cour_id INT,
+    cour_id CHAR(6),
     
     PRIMARY KEY(stud_id, cour_id),
     FOREIGN KEY(stud_id) REFERENCES ACTIVE(stud_id),
@@ -179,24 +187,15 @@ CREATE TABLE REQUESTED_COURSE (
 
 CREATE TABLE TAKEN_COURSE (
     stud_id INT,
-    cour_id INT,
+    cour_id CHAR(6),
     
     PRIMARY KEY(stud_id, cour_id),
     FOREIGN KEY(stud_id) REFERENCES ACTIVE(stud_id),
     FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id)
 );
 
-CREATE TABLE ALLOCATED_LECTURE (
-    cour_id INT,
-    lect_id INT,
-    
-    PRIMARY KEY(cour_id, lect_id),
-    FOREIGN KEY(cour_id) REFERENCES COURSE(cour_id),
-    FOREIGN KEY(lect_id) REFERENCES LECTURE(lect_id)
-);
-
 CREATE TABLE NEEDED_STOCK (
-    cour_id     INT,
+    cour_id     CHAR(6),
     stck_id     INT,
     need_amount INT NOT NULL,
 
@@ -278,13 +277,12 @@ create trigger DELETE_COURSE_REQUESTED_COURSE before DELETE on COURSE for each r
 create trigger DELETE_COURSE_TAKEN_COURSE before DELETE on COURSE for each row -- DELETE taken courses of a course when it is deleted
 	DELETE from TAKEN_COURSE tc where tc.cour_id=old.cour_id;
 
-create trigger DELETE_COURSE_ALLOCATED_LECTURE before DELETE on COURSE for each row -- DELETE allocated lectures of a course when it is deleted
-	DELETE from ALLOCATED_LECTURE al where al.cour_id=old.cour_id;
+delimiter $$
+create trigger DELETE_COURSE_TRIGGER before DELETE on COURSE for each row begin -- DELETE allocated lectures of a course when it is deleted
+	DELETE from COUR_HOUR cl where cl.cour_id=old.cour_id;
+	DELETE from GIVEN_COURSE gc where gc.cour_id=old.cour_id;
+end $$
+delimiter ;
 
 create trigger DELETE_COURSE_NEEDED_STOCK before DELETE on COURSE for each row -- DELETE needed stocks of a course when it is deleted
 	DELETE from NEEDED_STOCK ns where ns.cour_id=old.cour_id;
-
--- LECTURE ------------------------------------------------
-
-create trigger DELETE_LECTURE_ALLOCATED_LECTURE before DELETE on LECTURE for each row -- DELETE allocated lectures of a lecture when it is deleted
-	DELETE from ALLOCATED_LECTURE al where al.lect_id=old.lect_id;
