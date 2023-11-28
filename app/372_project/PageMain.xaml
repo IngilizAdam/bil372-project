@@ -9,7 +9,9 @@
       Title="PageMain">
 
     <Grid>
-
+        <Grid.Background>
+            <ImageBrush ImageSource="/anasayfa.png"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="400"/>
@@ -25,24 +27,29 @@
             <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
-        <Button Margin="0,10,0,10" Grid.Row="2" Grid.Column="1" Click="Sorgula_Button_Click">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
-                <TextBlock Margin="10 0 10 0">Sorgula</TextBlock>
-            </Viewbox>
-        </Button>
-        <Button Margin="0,10,0,10" Grid.Row="3" Grid.Column="1">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
-                <TextBlock Margin="10 0 10 0">Güncelle</TextBlock>
-            </Viewbox>
-        </Button>
-        <Button Margin="0,10,0,10" Grid.Row="4" Grid.Column="1" Click="Ekle_Button_Click">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
-                <TextBlock Margin="10 0 10 0">Ekle</TextBlock>
-            </Viewbox>
-        </Button>
-        <Button Margin="0,10,0,10" Grid.Row="5" Grid.Column="1">
-            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
-                <TextBlock Margin="10 0 10 0">Sil</TextBlock>
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Margin="0 0 0 0" VerticalAlignment="Bottom" FontSize="20">Kullanıcı Adı</TextBlock>
+            <TextBox x:Name="KullaniciAdi_TextBox" Grid.Row="1" Margin="0 0 0 0" VerticalAlignment="Stretch" FontSize="20" VerticalContentAlignment="Center"/>
+        </Grid>
+
+        <Grid Grid.Row="3" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Margin="0 0 0 0" VerticalAlignment="Bottom" FontSize="20">Şifre</TextBlock>
+            <PasswordBox x:Name="Sifre_TextBox" Grid.Row="1" Margin="0 0 0 0" VerticalAlignment="Stretch" FontSize="20" VerticalContentAlignment="Center"/>
+        </Grid>
+
+        <Button Margin="50,15,50,15" Grid.Row="5" Grid.Column="1" Click="Giris_Button_Click">
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="40">
+                <TextBlock Margin="10 0 10 0">Kullanıcı Girişi</TextBlock>
             </Viewbox>
         </Button>
     </Grid>

@@ -42,9 +42,15 @@ namespace _372_project
 
             categoryComboBoxes.Add(category1);
             categoryComboBoxes.Add(category2);
+            categoryComboBoxes.Add(category3);
+            category2.SelectedIndex = 0;
+            category3.SelectedIndex = 0;
 
             category2.Visibility = Visibility.Hidden;
             category2TextBlock.Visibility = Visibility.Hidden;
+
+            category3.Visibility = Visibility.Hidden;
+            category3TextBlock.Visibility = Visibility.Hidden;
 
             ekleButton.Visibility = Visibility.Hidden;
         }
@@ -62,6 +68,9 @@ namespace _372_project
                 return;
 
             categoryLevel = 0;
+            category2.SelectedIndex = 0;
+            category3.SelectedIndex = 0;
+
             ComboboxKeyValuePair selection = (ComboboxKeyValuePair) e.AddedItems[0];
             Debug.WriteLine(selection.Value);
             
@@ -77,6 +86,8 @@ namespace _372_project
                 return;
 
             categoryLevel = 1;
+            category3.SelectedIndex = 0;
+
             ComboboxKeyValuePair selection = (ComboboxKeyValuePair) e.AddedItems[0];
             Debug.WriteLine(selection.Value);
 
@@ -91,24 +102,65 @@ namespace _372_project
             {
                 ekleButton.Visibility = Visibility.Hidden;
             }
+
+            initCategory3ComboBox(selection);
         }
 
-        private void initCategory2ComboBox(ComboboxKeyValuePair parent)
+        private void category3_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            category2.Visibility = Visibility.Hidden;
-            category2TextBlock.Visibility = Visibility.Hidden;
-            List<ComboboxKeyValuePair> category2List = Constants.CATEGORY1_TO_2_DICT[parent.Value];
-            category2.ItemsSource = category2List;
-            if(category2List.Count > 0)
+            // ignore if changed from code
+            if (e.AddedItems.Count == 0)
+                return;
+
+            categoryLevel = 2;
+            ComboboxKeyValuePair selection = (ComboboxKeyValuePair)e.AddedItems[0];
+            Debug.WriteLine(selection.Value);
+
+            setupTableWithFilters(selection);
+
+            if (category3.SelectedIndex != 0)
             {
                 ekleButton.Visibility = Visibility.Hidden;
-                category2.SelectedIndex = 0;
-                category2.Visibility = Visibility.Visible;
-                category2TextBlock.Visibility = Visibility.Visible;
             }
             else
             {
                 ekleButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void initCategory2ComboBox(ComboboxKeyValuePair parent)
+        {
+            List<ComboboxKeyValuePair> category2List = Constants.CATEGORY1_TO_2_DICT[parent.Value];
+            category2.ItemsSource = category2List;
+            category2.SelectedIndex = 0;
+            category2.Visibility = Visibility.Visible;
+            category2TextBlock.Visibility = Visibility.Visible;
+
+            if(category2List.Count > 1)
+            {
+                ekleButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                ekleButton.Visibility = Visibility.Visible;
+                ekleButton.Content = parent.Key + " Ekle";
+            }
+        }
+
+        private void initCategory3ComboBox(ComboboxKeyValuePair parent)
+        {
+            List<ComboboxKeyValuePair> category3List = Constants.CATEGORY2_TO_3_DICT[parent.Value];
+            category3.ItemsSource = category3List;
+            category3.SelectedIndex = 0;
+            category3.Visibility = Visibility.Visible;
+            category3TextBlock.Visibility = Visibility.Visible;
+
+            if (category3List.Count > 1)
+            {
+                
+            }
+            else
+            {
                 ekleButton.Content = parent.Key + " Ekle";
             }
         }
@@ -173,11 +225,11 @@ namespace _372_project
 
                 if (conditionCount > 0)
                 {
-                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel].SelectedItem)).Value + " WHERE" + command;
+                    command = constructCommand() + " WHERE" + command;
                 }
                 else
                 {
-                    command = "SELECT * FROM " + ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel].SelectedItem)).Value;
+                    command = constructCommand();
                 }
 
                 Debug.WriteLine(command);
@@ -195,16 +247,7 @@ namespace _372_project
 
         private void setupTableWithFilters(ComboboxKeyValuePair selection)
         {
-            if (categoryLevel == 1 && categoryComboBoxes[categoryLevel].SelectedIndex != 0)
-            {
-                ComboboxKeyValuePair parent = ((ComboboxKeyValuePair)(categoryComboBoxes[categoryLevel - 1].SelectedItem));
-                string attrName = Constants.JOIN_ATTR_DICT[parent.Value];
-                dataSet = DatabaseManager.selectCommand("SELECT * FROM " + parent.Value + " JOIN " + selection.Value + " USING(" + attrName + ")");
-            }
-            else
-            {
-                dataSet = DatabaseManager.selectCommand("SELECT * FROM " + selection.Value);
-            }
+            dataSet = DatabaseManager.selectCommand(constructCommand());
 
             setDataGridSource(dataSet);
 
@@ -219,11 +262,8 @@ namespace _372_project
 
             filterTextBoxesGrid = new Grid();
 
-            Grid.SetRow(filterTextBoxesGrid, 5);
-            Grid.SetColumn(filterTextBoxesGrid, 0);
-            Grid.SetColumnSpan(filterTextBoxesGrid, 16);
-            Grid.SetRowSpan(filterTextBoxesGrid, 2);
-            grid.Children.Add(filterTextBoxesGrid);
+            filter_scrollviewer.Content = filterTextBoxesGrid;
+            filterTextBoxesGrid.Margin = new Thickness(0, 0, 0, 5);
 
             filterTextBoxesGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
             filterTextBoxesGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
@@ -236,6 +276,7 @@ namespace _372_project
                 Constants.NAME_TO_ATTR_DICT.TryGetValue(attributeName, out attributeName);
                 TextBox textBox = Utils.createTextBox(attributeName, filterTextBoxesGrid, 1, i, 1, 2);
                 TextBlock textBlock = Utils.createTextBlock(attribute.ColumnName, filterTextBoxesGrid, 0, i, 1, 2);
+                textBlock.Margin = new Thickness(10, 0, 0, -10);
                 textBoxes.Add(textBox);
                 textBlocks.Add(textBlock);
 
@@ -258,11 +299,47 @@ namespace _372_project
             }
         }
 
-        
+        private string constructCommand()
+        {
+            string str = "";
+
+            ComboboxKeyValuePair category1Selection = (ComboboxKeyValuePair)(categoryComboBoxes[0].SelectedItem);
+            ComboboxKeyValuePair category2Selection = (ComboboxKeyValuePair)(categoryComboBoxes[1].SelectedItem);
+            ComboboxKeyValuePair category3Selection = (ComboboxKeyValuePair)(categoryComboBoxes[2].SelectedItem);
+
+            if (categoryComboBoxes[2].SelectedIndex > 0 && categoryComboBoxes[1].SelectedIndex > 0)
+            {
+                str = "SELECT * FROM " + category1Selection.Value + " " + category2Selection.Command + " " + category3Selection.Command;
+            }
+            else if(categoryComboBoxes[2].SelectedIndex > 0 && categoryComboBoxes[1].SelectedIndex <= 0)
+            {
+                str = "SELECT * FROM " + category1Selection.Value + " " + category3Selection.Command;
+            }
+            else if(categoryComboBoxes[2].SelectedIndex <= 0 && categoryComboBoxes[1].SelectedIndex > 0)
+            {
+                str = "SELECT * FROM " + category1Selection.Value + " " + category2Selection.Command;
+            }
+            else
+            {
+                str = "SELECT * FROM " + category1Selection.Value;
+            }
+
+            return str;
+        }
+
         private void Ekle_Button_Click(object sender, RoutedEventArgs e)
         {
-            WindowEkle popup = new WindowEkle((ComboboxKeyValuePair)category1.SelectedItem, (ComboboxKeyValuePair)category2.SelectedItem, categoryLevel, dataSet);
+            WindowEkle popup = new WindowEkle((ComboboxKeyValuePair)category1.SelectedItem, (ComboboxKeyValuePair)category2.SelectedItem, categoryLevel, dataSet, Window.GetWindow(this));
             popup.Show();
+            Window.GetWindow(this).IsEnabled = false;
+        }
+
+        private void dataGrid_KeyDown(object sender, KeyEventArgs e)
+        {
+            if(e.Key == Key.Delete)
+            {
+                Debug.WriteLine("Delete key pressed");
+            }
         }
     }
 }

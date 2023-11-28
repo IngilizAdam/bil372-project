@@ -3,12 +3,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:_372_project"
+      xmlns:local="clr-namespace:_372_project" xmlns:sys="clr-namespace:System;assembly=netstandard"
       mc:Ignorable="d" 
       d:DesignHeight="720" d:DesignWidth="1280"
       Title="PageSorgula">
 
     <Grid x:Name="grid">
+        <Grid.Background>
+            <ImageBrush ImageSource="/sorguekrani.png"/>
+        </Grid.Background>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
             <ColumnDefinition Width="80"/>
@@ -54,7 +57,7 @@
             </Viewbox>
         </Button>
 
-        <DataGrid Grid.Row="7" Grid.Column="0" Grid.RowSpan="10" Grid.ColumnSpan="16" Margin="10,10,25,10" x:Name="dataGrid" ItemsSource="{Binding }" AutoGenerateColumns="true" IsReadOnly="True"/>
+        <DataGrid RowBackground="Transparent" Background="Transparent" Grid.Row="7" Grid.Column="0" Grid.RowSpan="10" Grid.ColumnSpan="16" Margin="10,10,25,10" x:Name="dataGrid" ItemsSource="{Binding }" AutoGenerateColumns="true" IsReadOnly="True" PreviewKeyDown="dataGrid_KeyDown"/>
 
         <TextBlock Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20">Kategori 1</TextBlock>
         <ComboBox x:Name="category1" Grid.Column="1" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" SelectionChanged="category1_selectionChanged"/>
@@ -62,10 +65,19 @@
         <TextBlock x:Name="category2TextBlock" Grid.Column="4" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20">Kategori 2</TextBlock>
         <ComboBox x:Name="category2" Grid.Column="4" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" SelectionChanged="category2_SelectionChanged"/>
 
-        <Button x:Name="ekleButton" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,9,0,9" Grid.Row="3" Grid.Column="7" Grid.ColumnSpan="2" Click="Ekle_Button_Click">
+        <TextBlock x:Name="category3TextBlock" Grid.Column="7" Grid.Row="2" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,-5" FontSize="20">Kategori 3</TextBlock>
+        <ComboBox x:Name="category3" Grid.Column="7" Grid.Row="3" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Margin="0,0,0,0" VerticalAlignment="Center" SelectionChanged="category3_SelectionChanged"/>
+
+        <Button x:Name="ekleButton" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="0,9,0,9" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Click="Ekle_Button_Click">
             <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center" Height="50">
-                <TextBlock Margin="0,10,0,10"> &lt;- Geri</TextBlock>
+                <TextBlock Margin="0,10,0,10">Ekle</TextBlock>
             </Viewbox>
         </Button>
+
+        <ScrollViewer x:Name="filter_scrollviewer" Grid.Row="5" Grid.Column="0" Grid.RowSpan="2" Grid.ColumnSpan="16" HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Disabled">
+            <ScrollViewer.Resources>
+                <sys:Double x:Key="{x:Static SystemParameters.HorizontalScrollBarHeightKey}">10</sys:Double>
+            </ScrollViewer.Resources>
+        </ScrollViewer>
     </Grid>
 </Page>

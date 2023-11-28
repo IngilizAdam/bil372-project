@@ -22,5 +22,13 @@ namespace _372_project
             InitializeComponent();
             this.Content = new PageMain();
         }
+
+        private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            base.OnMouseLeftButtonDown(e);
+
+            // Begin dragging the window
+            this.DragMove();
+        }
     }
 }

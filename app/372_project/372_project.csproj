@@ -10,7 +10,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="anasayfa.png" />
+    <None Remove="sorguekrani.png" />
+    <None Remove="temp.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="2.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="anasayfa.png" />
+    <Resource Include="sorguekrani.png" />
+    <Resource Include="temp.png" />
   </ItemGroup>
 
 </Project>

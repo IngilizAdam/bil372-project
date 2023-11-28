@@ -26,16 +26,18 @@ namespace _372_project
             InitializeComponent();
         }
 
-        private void Sorgula_Button_Click(object sender, RoutedEventArgs e)
+        private void Giris_Button_Click(object sender, RoutedEventArgs e)
         {
-            Debug.WriteLine("SorgulaButtonClick");
-            Application.Current.MainWindow.Content = new PageSorgula();
-        }
+            Debug.WriteLine("GirisButtonClick");
 
-        private void Ekle_Button_Click(object sender, RoutedEventArgs e)
-        {
-            Debug.WriteLine("EkleButtonClick");
-            Application.Current.MainWindow.Content = new PageEkle();
+            if(KullaniciAdi_TextBox.Text == "admin" && Sifre_TextBox.Password == "admin")
+            {
+                Application.Current.MainWindow.Content = new PageSorgula();
+            }
+            else
+            {
+                MessageBox.Show("Kullanıcı adı veya şifre hatalı!");
+            }
         }
     }
 }

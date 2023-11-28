@@ -10,11 +10,13 @@ namespace _372_project
     {
         public string Key { get; set; }
         public string Value { get; set; }
+        public string Command { get; set; }
 
-        public ComboboxKeyValuePair(string key, string value)
+        public ComboboxKeyValuePair(string key, string value, string command)
         {
             Key = key;
             Value = value;
+            Command = command;
         }
 
         public override string ToString()

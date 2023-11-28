@@ -118,43 +118,143 @@ namespace _372_project
 
         public static List<ComboboxKeyValuePair> CATEGORY1_LIST = new List<ComboboxKeyValuePair>()
         {
-            new ComboboxKeyValuePair("Öğrenci", "STUDENT"),
-            new ComboboxKeyValuePair("Veli", "PARENT"),
-            new ComboboxKeyValuePair("Çalışan", "EMPLOYEE"),
-            new ComboboxKeyValuePair("Ders", "COURSE"),
-            new ComboboxKeyValuePair("Harcama", "EXPENSE"),
-            new ComboboxKeyValuePair("Stok", "STOCK"),
-        };
-
-        public static List<ComboboxKeyValuePair> CATEGORY2_STUDENT_LIST = new List<ComboboxKeyValuePair>()
-        {
-            new ComboboxKeyValuePair("Tüm Öğrenciler", "STUDENT"),
-            new ComboboxKeyValuePair("Aktif Öğrenci", "ACTIVE"),
-            new ComboboxKeyValuePair("Mezun Öğrenci", "GRADUATE"),
-        };
-
-        public static List<ComboboxKeyValuePair> CATEGORY2_EMPLOYEE_LIST = new List<ComboboxKeyValuePair>()
-        {
-            new ComboboxKeyValuePair("Tüm Çalışanlar", "EMPLOYEE"),
-            new ComboboxKeyValuePair("Öğretim Görevlisi", "INSTRUCTOR"),
-            new ComboboxKeyValuePair("Temizlik Görevlisi", "STAFF"),
-            new ComboboxKeyValuePair("İdari Personel", "ADMIN_STAFF"),
+            new ComboboxKeyValuePair("Öğrenci", "STUDENT", ""),
+            new ComboboxKeyValuePair("Veli", "PARENT", ""),
+            new ComboboxKeyValuePair("Çalışan", "EMPLOYEE", ""),
+            new ComboboxKeyValuePair("Ders", "COURSE", ""),
+            new ComboboxKeyValuePair("Harcama", "EXPENSE", ""),
+            new ComboboxKeyValuePair("Stok", "STOCK", ""),
         };
 
         public static Dictionary<string, List<ComboboxKeyValuePair>> CATEGORY1_TO_2_DICT = new Dictionary<string, List<ComboboxKeyValuePair>>()
         {
-            {"STUDENT", CATEGORY2_STUDENT_LIST},
-            {"PARENT", new List<ComboboxKeyValuePair>()},
-            {"EMPLOYEE", CATEGORY2_EMPLOYEE_LIST},
-            {"COURSE", new List<ComboboxKeyValuePair>()},
-            {"EXPENSE", new List<ComboboxKeyValuePair>()},
-            {"STOCK", new List<ComboboxKeyValuePair>()},
+            {
+                "STUDENT", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Öğrenciler", "STUDENT", ""),
+                    new ComboboxKeyValuePair("Aktif Öğrenci", "ACTIVE", "JOIN ACTIVE USING(stud_id)"),
+                    new ComboboxKeyValuePair("Mezun Öğrenci", "GRADUATE", "JOIN GRADUATE USING(stud_id)"),
+                }
+            },
+            {
+                "PARENT", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Veliler", "PARENT", ""),
+                }
+            },
+            {
+                "EMPLOYEE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Çalışanlar", "EMPLOYEE", ""),
+                    new ComboboxKeyValuePair("Öğretim Görevlisi", "INSTRUCTOR", "JOIN INSTRUCTOR USING(empl_id)"),
+                    new ComboboxKeyValuePair("Temizlik Görevlisi", "STAFF", "JOIN STAFF USING(empl_id)"),
+                    new ComboboxKeyValuePair("İdari Personel", "ADMIN_STAFF", "JOIN ADMIN_STAFF USING(empl_id)"),
+                }
+            },
+            {
+                "COURSE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Dersler", "COURSE", ""),
+                }
+            },
+            {
+                "EXPENSE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Harcamalar", "EXPENSE", ""),
+                }
+            },
+            {
+                "STOCK", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Tüm Stoklar", "STOCK", ""),
+                }
+            },
         };
 
-        public static Dictionary<string, string> JOIN_ATTR_DICT = new Dictionary<string, string>()
+        public static Dictionary<string, List<ComboboxKeyValuePair>> CATEGORY2_TO_3_DICT = new Dictionary<string, List<ComboboxKeyValuePair>>()
         {
-            { "STUDENT",  "stud_id" },
-            { "EMPLOYEE", "empl_id" },
+            {
+                "STUDENT", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Yakınları", "RELATIVE", "JOIN RELATIVE USING(stud_id) JOIN PARENT USING(pare_id)"),
+                }
+            },
+            {
+                "ACTIVE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Yakınları", "RELATIVE", "JOIN RELATIVE USING(stud_id) JOIN PARENT USING(pare_id)"),
+                    new ComboboxKeyValuePair("Müsait Zaman", "STUD_AVAIL_HOUR", "JOIN STUD_AVAIL_HOUR USING(stud_id)"),
+                    new ComboboxKeyValuePair("Talep Edilen Ders", "REQUESTED_COURSE", "JOIN REQUESTED_COURSE USING(stud_id) JOIN COURSE USING(cour_id)"),
+                    new ComboboxKeyValuePair("Alınan Ders", "TAKEN_COURSE", "JOIN TAKEN_COURSE USING(stud_id) JOIN COURSE USING(cour_id)"),
+                    new ComboboxKeyValuePair("Alınan Ders Zamanları", "TAKEN_COURSE", "JOIN TAKEN_COURSE USING(stud_id) JOIN COURSE USING(cour_id) JOIN ALLOCATED_LECTURE USING(cour_id) JOIN LECTURE USING(lect_id)"),
+                }
+            },
+            {
+                "GRADUATE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Yakınları", "RELATIVE", "JOIN RELATIVE USING(stud_id) JOIN PARENT USING(pare_id)"),
+                }
+            },
+            {
+                "PARENT", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Öğrenci", "RELATIVE", "JOIN RELATIVE USING(pare_id) JOIN STUDENT USING(stud_id)"),
+                }
+            },
+            {
+                "EMPLOYEE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                }
+            },
+            {
+                "INSTRUCTOR", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Müsait Zaman", "INST_AVAIL_HOUR", "JOIN INST_AVAIL_HOUR USING(empl_id)"),
+                    new ComboboxKeyValuePair("Ders", "COURSE", "JOIN COURSE ON INSTRUCTOR.empl_id=COURSE.cour_instructor"),
+                    new ComboboxKeyValuePair("Ders Zamanı", "ALLOCATED_LECTURE", "JOIN COURSE ON INSTRUCTOR.empl_id=COURSE.cour_instructor JOIN ALLOCATED_LECTURE USING(cour_id) JOIN LECTURE USING(lect_id)"),
+                }
+            },
+            {
+                "STAFF", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                }
+            },
+            {
+                "ADMIN_STAFF", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                }
+            },
+            {
+                "COURSE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Eğitmen", "INSTRUCTOR", "JOIN INSTRUCTOR ON INSTRUCTOR.empl_id=COURSE.cour_instructor JOIN EMPLOYEE USING(empl_id)"),
+                    new ComboboxKeyValuePair("Öğrenciler", "TAKEN_COURSE", "JOIN TAKEN_COURSE USING(cour_id) JOIN STUDENT USING(stud_id)"),
+                    new ComboboxKeyValuePair("Ders Zamanı", "ALLOCATED_LECTURE", "JOIN ALLOCATED_LECTURE USING(cour_id) JOIN LECTURE USING(lect_id)"),
+                    new ComboboxKeyValuePair("Ders Materyali", "NEEDED_STOCK", "JOIN NEEDED_STOCK USING(cour_id) JOIN STOCK USING(stck_id)"),
+                }
+            },
+            {
+                "EXPENSE", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                }
+            },
+            {
+                "STOCK", new List<ComboboxKeyValuePair>()
+                {
+                    new ComboboxKeyValuePair("Varsayılan", "", ""),
+                    new ComboboxKeyValuePair("Kullanılan Ders", "NEEDED_STOCK", "JOIN NEEDED_STOCK USING(stck_id) JOIN COURSE USING(cour_id)"),
+                }
+            },
         };
     }
 }

@@ -6,7 +6,9 @@
         xmlns:local="clr-namespace:_372_project"
         mc:Ignorable="d"
         ResizeMode="CanMinimize"
-        Title="MainWindow" Height="720" Width="1280">
+        WindowStyle="None"
+        Title="MainWindow" Height="720" Width="1280"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="80"/>
