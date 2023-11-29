@@ -93,7 +93,7 @@ int main(){
     cout << ";" << endl << endl;
 
 
-    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_year, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
+    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_date, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
     ids.clear();
     for(int i = 0; i < 100; i++){
         string first_name, last_name;
