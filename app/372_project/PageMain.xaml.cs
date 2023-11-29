@@ -39,5 +39,16 @@ namespace _372_project
                 MessageBox.Show("Kullanıcı adı veya şifre hatalı!");
             }
         }
+
+        private void Geri_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("GeriButtonClick");
+        }
+
+        private void Cikis_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("CikisButtonClick");
+            Application.Current.Shutdown();
+        }
     }
 }

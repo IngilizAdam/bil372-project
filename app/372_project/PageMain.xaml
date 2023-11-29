@@ -27,6 +27,18 @@
             <RowDefinition Height="80"/>
         </Grid.RowDefinitions>
 
+        <Button Margin="-326,-159,0,0" Grid.Row="0" Grid.Column="0" Width="25" Height="25" Click="Cikis_Button_Click" Background="Transparent" BorderThickness="0">
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Margin="15,0,15,0">Çıkış</TextBlock>
+            </Viewbox>
+        </Button>
+
+        <Button Margin="-261,-159,0,0" Grid.Row="0" Grid.Column="0" Width="25" Height="25" Click="Geri_Button_Click" Background="Transparent" BorderThickness="0">
+            <Viewbox HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Margin="15,0,15,0"> &lt;- Geri</TextBlock>
+            </Viewbox>
+        </Button>
+
         <Grid Grid.Row="2" Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>

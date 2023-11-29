@@ -59,6 +59,12 @@ namespace _372_project
             Application.Current.MainWindow.Content = new PageMain();
         }
 
+        private void Cikis_Button_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("CikisButtonClick");
+            Application.Current.Shutdown();
+        }
+
         private void category1_selectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // ignore if changed from code
@@ -290,6 +296,20 @@ namespace _372_project
         private void Ekle_Button_Click(object sender, RoutedEventArgs e)
         {
             WindowEkle popup = new WindowEkle(Window.GetWindow(this));
+            popup.Show();
+            Window.GetWindow(this).IsEnabled = false;
+        }
+
+        private void Sil_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowSil popup = new WindowSil(Window.GetWindow(this));
+            popup.Show();
+            Window.GetWindow(this).IsEnabled = false;
+        }
+
+        private void Duzenle_Button_Click(object sender, RoutedEventArgs e)
+        {
+            WindowDuzenle popup = new WindowDuzenle(Window.GetWindow(this));
             popup.Show();
             Window.GetWindow(this).IsEnabled = false;
         }
