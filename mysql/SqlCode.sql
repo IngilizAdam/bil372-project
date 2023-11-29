@@ -51,7 +51,7 @@ CREATE TABLE STUDENT (
     stud_id       	INT,
     stud_fname      VARCHAR(12) NOT NULL,
     stud_lname      VARCHAR(12) NOT NULL,
-    stud_birth_year DATE,
+    stud_birth_date DATE,
     stud_sex      	BOOL,
     stud_reg_date 	DATE        NOT NULL,
     stud_gpa      	FLOAT       NOT NULL,
