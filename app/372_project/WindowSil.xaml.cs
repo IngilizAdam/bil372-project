@@ -112,10 +112,15 @@ namespace _372_project
         }
         private void filter_textbox_key_down(object sender, KeyEventArgs e)
         {
-            
             if (e.Key.Equals(Key.Enter))
             {
-                refresh();
+                try
+                {
+                    refresh();
+                } catch (Exception)
+                {
+                    MessageBox.Show("Hata: Arama işlemi başarısız oldu.");
+                }
             }
         }
 

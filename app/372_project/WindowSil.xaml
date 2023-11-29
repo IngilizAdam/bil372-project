@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:_372_project" xmlns:sys="clr-namespace:System;assembly=netstandard"
         mc:Ignorable="d"
+        ResizeMode="CanMinimize"
         Closed="Window_Closed"
         Title="WindowSil" Height="450" Width="800">
     <Grid>
