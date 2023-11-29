@@ -220,7 +220,7 @@ int main(){
 
     cout << ";" << endl << endl;
 
-    cout << "INSERT INTO EXPENSE(exps_id, exps_name, exps_date, exps_cost, exps_type) VALUES " << endl;
+    cout << "INSERT INTO EXPENSE(exps_name, exps_date, exps_cost, exps_type) VALUES " << endl;
 
     // List some expanses for university management
     vector<string> expense_names = {"Electricity", "Water", "Internet", "Gas", "Cleaning", "Security", "Food", "Salary", "Other"};
@@ -233,7 +233,7 @@ int main(){
             int expense_date = rand() % 28 + 1;
             int expense_month = rand() % 9 + 1;
             string date = to_string(2020 + j) + "/" + to_string(expense_month) + "/" + to_string(expense_date);
-            cout << "(" << i*4 + j << ", '" << expense_name << "', '" << date << "', " << amount << ", " << is_fixed << ")";
+            cout << "(" << "'" << expense_name << "', '" << date << "', " << amount << ", " << is_fixed << ")";
 
             if(i != 7 || j != 3) cout << ",";
             cout << endl;
