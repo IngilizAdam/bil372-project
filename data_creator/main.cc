@@ -25,7 +25,7 @@ int main(){
     // Engineering departments: BIL 01, ELE 02, MAK 03
     // Science and Literature: IDE 01, TDE 02, TAR 03
     // Economics departments: ISL 01, IKT 02, SUI 03
-    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_year, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
+    cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_date, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
     vector<string> ids;
     for(int i = 0; i < 500; i++){
         string first_name, last_name;
@@ -314,7 +314,7 @@ int main(){
 
     // Hard code the courses
 
-    cout << "INSERT INTO COURSE(cour_id, cour_name, cour_credit, cour_type, cour_faculty, cour_department) VALUES " << endl;
+    cout << "INSERT INTO COURSE(cour_id, cour_min_req) VALUES " << endl;
     
     cout << "(\"BIL113\",	30),"<< endl<<
             "(\"BIL121\",	40),"<< endl<<
