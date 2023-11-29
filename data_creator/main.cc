@@ -276,25 +276,28 @@ int main(){
     cout << ";" << endl << endl;
 
     //Insert into employee_type janitor or administrative staff
-
+    int cnt3 = 0;
     cout << "INSERT INTO STAFF(empl_id) VALUES " << endl;
+    cnt3 = 0;
     for(auto emp: employee_ids){
         if(emp.second == 1){
-            cout << "(" << emp.first << ")";
-            if(emp.first != employee_ids.back().first) cout << ",";
-            cout << endl;
-        }
+            if(cnt3 != 0)
+                cout<<","<<endl;
+            cout << "(" << emp.first << ")"; 
+            cnt3++;
+        }       
     }
-
     cout << ";" << endl << endl;
 
     cout << "INSERT INTO ADMIN_STAFF(empl_id) VALUES " << endl;
+    cnt3 = 0;
     for(auto emp: employee_ids){
         if(emp.second == 0){
-            cout << "(" << emp.first << ")";
-            if(emp.first != employee_ids.back().first) cout << ",";
-            cout << endl;
-        }
+            if(cnt3 != 0)
+                cout<<","<<endl;
+            cout << "(" << emp.first << ")"; 
+            cnt3++;
+        }       
     }
 
 
@@ -316,53 +319,53 @@ int main(){
 
     cout << "INSERT INTO COURSE(cour_id, cour_min_req) VALUES " << endl;
     
-    cout << "(\"BIL113\",	30),"<< endl<<
-            "(\"BIL121\",	40),"<< endl<<
-            "(\"BIL132\",	30),"<< endl<<
-            "(\"BIL141\",	40),"<< endl<<
-            "(\"BIL142\",	50),"<< endl<<
-            "(\"BIL191\",	30),"<< endl<<
-            "(\"BIL211\",	30),"<< endl<<
-            "(\"ELE101\",	30),"<< endl<<
-            "(\"FIZ101\",	50),"<< endl<<
-            "(\"FIZ102\",	50),"<< endl<<
-            "(\"HUK115\",	20),"<< endl<<
-            "(\"IDE100\",	20),"<< endl<<
-            "(\"IDE103\",	20),"<< endl<<
-            "(\"IDE104\",	20),"<< endl<<
-            "(\"IDE105\",	20),"<< endl<<
-            "(\"IDE108\",	20),"<< endl<<
-            "(\"IDE110\",	20),"<< endl<<
-            "(\"IKT105\",	50),"<< endl<<
-            "(\"IKT110\",	20),"<< endl<<
-            "(\"ING001\",	50),"<< endl<<
-            "(\"ING002\",	50),"<< endl<<
-            "(\"ISL113\",	20),"<< endl<<
-            "(\"MAK104\",	30),"<< endl<<
-            "(\"MAK112\",	30),"<< endl<<
-            "(\"MAT101\",	50),"<< endl<<
-            "(\"MAT102\",	50),"<< endl<<
-            "(\"MAT103\",	50),"<< endl<<
-            "(\"MAT104\",	20),"<< endl<<
-            "(\"OEG101\",	50),"<< endl<<
-            "(\"SUI101\",	20),"<< endl<<
-            "(\"SUI102\",	20),"<< endl<<
-            "(\"SUI105\",	20),"<< endl<<
-            "(\"SUI106\",	20),"<< endl<<
-            "(\"SUI108\",	20),"<< endl<<
-            "(\"SUI114\",	20),"<< endl<<
-            "(\"TAR113\",	20),"<< endl<<
-            "(\"TAR131\",	20),"<< endl<<
-            "(\"TAR141\",	20),"<< endl<<
-            "(\"TAR146\",	20),"<< endl<<
-            "(\"TAR191\",	20),"<< endl<<
-            "(\"TAR192\",	20),"<< endl<<
-            "(\"TDE111\",	20),"<< endl<<
-            "(\"TDE121\",	20),"<< endl<<
-            "(\"TDE131\",	20),"<< endl<<
-            "(\"TDE143\",	20),"<< endl<<
-            "(\"TUR101\",	50),"<< endl<<
-            "(\"TUR102\",	50);";
+    cout << "('BIL113',	30),"<< endl<<
+            "('BIL121',	40),"<< endl<<
+            "('BIL132',	30),"<< endl<<
+            "('BIL141',	40),"<< endl<<
+            "('BIL142',	50),"<< endl<<
+            "('BIL191',	30),"<< endl<<
+            "('BIL211',	30),"<< endl<<
+            "('ELE101',	30),"<< endl<<
+            "('FIZ101',	50),"<< endl<<
+            "('FIZ102',	50),"<< endl<<
+            "('HUK115',	20),"<< endl<<
+            "('IDE100',	20),"<< endl<<
+            "('IDE103',	20),"<< endl<<
+            "('IDE104',	20),"<< endl<<
+            "('IDE105',	20),"<< endl<<
+            "('IDE108',	20),"<< endl<<
+            "('IDE110',	20),"<< endl<<
+            "('IKT105',	50),"<< endl<<
+            "('IKT110',	20),"<< endl<<
+            "('ING001',	50),"<< endl<<
+            "('ING002',	50),"<< endl<<
+            "('ISL113',	20),"<< endl<<
+            "('MAK104',	30),"<< endl<<
+            "('MAK112',	30),"<< endl<<
+            "('MAT101',	50),"<< endl<<
+            "('MAT102',	50),"<< endl<<
+            "('MAT103',	50),"<< endl<<
+            "('MAT104',	20),"<< endl<<
+            "('OEG101',	50),"<< endl<<
+            "('SUI101',	20),"<< endl<<
+            "('SUI102',	20),"<< endl<<
+            "('SUI105',	20),"<< endl<<
+            "('SUI106',	20),"<< endl<<
+            "('SUI108',	20),"<< endl<<
+            "('SUI114',	20),"<< endl<<
+            "('TAR113',	20),"<< endl<<
+            "('TAR131',	20),"<< endl<<
+            "('TAR141',	20),"<< endl<<
+            "('TAR146',	20),"<< endl<<
+            "('TAR191',	20),"<< endl<<
+            "('TAR192',	20),"<< endl<<
+            "('TDE111',	20),"<< endl<<
+            "('TDE121',	20),"<< endl<<
+            "('TDE131',	20),"<< endl<<
+            "('TDE143',	20),"<< endl<<
+            "('TUR101',	50),"<< endl<<
+            "('TUR102',	50);";
 
 
     cout << endl << endl;
