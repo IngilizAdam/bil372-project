@@ -17,6 +17,7 @@ CREATE TABLE EMPLOYEE (
     empl_type     BOOL        NOT NULL,
     empl_fname    VARCHAR(12) NOT NULL,
     empl_lname    VARCHAR(12) NOT NULL,
+    empl_sex      BOOL        NOT NULL,
     empl_salary   INT         NOT NULL,
     empl_reg_date DATE        NOT NULL,
     
