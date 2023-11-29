@@ -22,9 +22,9 @@ int main(){
 
     // Faculties: Engineering: 01, Medicine: 02, Economics: 03
 
-    // Engineering departments: CMP 01, EEE 02, MAE 03
-    // Medicine departments: MED 01, DEN 02, PHA 03
-    // Economics departments: BUS 01, ECO 02, INR 03
+    // Engineering departments: BIL 01, ELE 02, MAK 03
+    // Science and Literature: IDE 01, TDE 02, TAR 03
+    // Economics departments: ISL 01, IKT 02, SUI 03
     cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_year, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
     vector<string> ids;
     for(int i = 0; i < 500; i++){
@@ -243,7 +243,7 @@ int main(){
     cout << ";" << endl << endl;
 
 
-    cout << "INSERT INTO EMPLOYEE(empl_id, empl_type, empl_fname, empl_lname, empl_salary, empl_reg_date) VALUES " << endl;
+    cout << "INSERT INTO EMPLOYEE(empl_id, empl_type, empl_fname, empl_lname, empl_sex, empl_salary, empl_reg_date) VALUES " << endl;
 
     // Create employees
     vector<pair<string, int>> employee_ids;
@@ -263,14 +263,10 @@ int main(){
         else
             male_name >> first_name;
         string email = first_name + "." + last_name + "@etu.edu.tr";
-        string tr_id;
-        for(int i = 0; i < 11; i++){
-            tr_id += to_string(rand() % 10);
-        }
 
         surname >> last_name;
 
-        cout << "(" << i + 1 << ", " << rand() % 2 << ", '" << first_name << "', '" << last_name << "', " << salary << ", '";
+        cout << "(" << i + 1 << ", " << rand() % 2 << ", '" << first_name << "', '" << last_name << "', " <<  sex << ", " << salary << ", '";
         cout << to_string(2015 + rand() % 8) << "/" << rand() % 9 + 1 << "/" << rand() % 28 + 1 << "')";
         if(i != 99) cout << ",";
         cout << endl;
@@ -302,7 +298,7 @@ int main(){
     }
 
 
-    // cout << ";" << endl << endl;
+    cout << ";" << endl << endl;
 
     // // Create hours for timetable
 
@@ -314,6 +310,110 @@ int main(){
     //     }
     // }
 
-    cout << ";" << endl << endl;
+    // cout << ";" << endl << endl;
+
+    // Hard code the courses
+
+    cout << "INSERT INTO COURSE(cour_id, cour_name, cour_credit, cour_type, cour_faculty, cour_department) VALUES " << endl;
+    
+    cout << "(\"BIL113\",	30),"<< endl<<
+            "(\"BIL121\",	40),"<< endl<<
+            "(\"BIL132\",	30),"<< endl<<
+            "(\"BIL141\",	40),"<< endl<<
+            "(\"BIL142\",	50),"<< endl<<
+            "(\"BIL191\",	30),"<< endl<<
+            "(\"BIL211\",	30),"<< endl<<
+            "(\"ELE101\",	30),"<< endl<<
+            "(\"FIZ101\",	50),"<< endl<<
+            "(\"FIZ102\",	50),"<< endl<<
+            "(\"HUK115\",	20),"<< endl<<
+            "(\"IDE100\",	20),"<< endl<<
+            "(\"IDE103\",	20),"<< endl<<
+            "(\"IDE104\",	20),"<< endl<<
+            "(\"IDE105\",	20),"<< endl<<
+            "(\"IDE108\",	20),"<< endl<<
+            "(\"IDE110\",	20),"<< endl<<
+            "(\"IKT105\",	50),"<< endl<<
+            "(\"IKT110\",	20),"<< endl<<
+            "(\"ING001\",	50),"<< endl<<
+            "(\"ING002\",	50),"<< endl<<
+            "(\"ISL113\",	20),"<< endl<<
+            "(\"MAK104\",	30),"<< endl<<
+            "(\"MAK112\",	30),"<< endl<<
+            "(\"MAT101\",	50),"<< endl<<
+            "(\"MAT102\",	50),"<< endl<<
+            "(\"MAT103\",	50),"<< endl<<
+            "(\"MAT104\",	20),"<< endl<<
+            "(\"OEG101\",	50),"<< endl<<
+            "(\"SUI101\",	20),"<< endl<<
+            "(\"SUI102\",	20),"<< endl<<
+            "(\"SUI105\",	20),"<< endl<<
+            "(\"SUI106\",	20),"<< endl<<
+            "(\"SUI108\",	20),"<< endl<<
+            "(\"SUI114\",	20),"<< endl<<
+            "(\"TAR113\",	20),"<< endl<<
+            "(\"TAR131\",	20),"<< endl<<
+            "(\"TAR141\",	20),"<< endl<<
+            "(\"TAR146\",	20),"<< endl<<
+            "(\"TAR191\",	20),"<< endl<<
+            "(\"TAR192\",	20),"<< endl<<
+            "(\"TDE111\",	20),"<< endl<<
+            "(\"TDE121\",	20),"<< endl<<
+            "(\"TDE131\",	20),"<< endl<<
+            "(\"TDE143\",	20),"<< endl<<
+            "(\"TUR101\",	50),"<< endl<<
+            "(\"TUR102\",	50);";
+
+
+    cout << endl << endl;
+
+    // Create Instructors in following numbers: 7 for BIL, 5 for ELE, 5 for MAK, 5 for IDE, 5 for TDE, 5 for TAR, 5 for TUR, 5 for ISL, 5 for IKT, 5 for SUI
+    // Instructor ID will always begin with a 01 followed by faculty number followed by department number followed by a 2 digit number
+    int nums[3][3] = {{4, 2, 2}, {3, 4}, {1, 2, 4}};
+
+    vector<string> inst_ids;
+    cout << "INSERT INTO EMPLOYEE(empl_id, empl_type, empl_fname, empl_lname, empl_sex, empl_salary, empl_reg_date) VALUES " << endl;
+    for(int idx1 = 0; idx1 < 3; idx1++){
+        for(int idx2 = 0; idx2 < 3; idx2++){
+            for(int i = 0; i < nums[idx1][idx2]; i++){
+ 
+                string first_name;
+                string last_name;
+                bool sex = rand() % 2;
+
+                if(sex == 0){
+                    male_name >> first_name; 
+                }else{
+                    female_name >> first_name;
+                }
+
+                surname >> last_name;
+
+                string id = to_string(idx1 + 1) + "0" + to_string(idx2 + 1) + "0" +  to_string(i + 1);
+                inst_ids.push_back(id);
+                int salary = (200 + rand() % 100) * 100;
+                cout << "(" << id << ", " << rand() % 2 << ", '" << first_name << "', '" << last_name << "', " << sex << ", " << salary << ", '";
+                cout << to_string(2015 + rand() % 8) << "/" << rand() % 9 + 1 << "/" << rand() % 28 + 1 << "')";
+                if(idx1 != 2 || idx2 != 2 || i != nums[idx1][idx2] - 1)
+                     cout << ",";
+                cout << endl; 
+            }
+        }
+    }
+
+    cout <<";" << endl;
+
+    cout << "INSERT INTO INSTRUCTOR(empl_id) VALUES" <<endl;
+
+    for(string id: inst_ids){
+        cout<< "(" << id <<")";
+        if(id != inst_ids.back())
+            cout<<",";
+        cout<<endl;
+    }
+
+    cout << ";" << endl;
+
+    
 
 }
