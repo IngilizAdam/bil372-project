@@ -26,7 +26,7 @@ int main(){
     // Science and Literature: IDE 01, TDE 02, TAR 03
     // Economics departments: ISL 01, IKT 02, SUI 03
     cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_date, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
-    vector<string> ids;
+    vector<string> ac_ids;
     for(int i = 0; i < 500; i++){
         string first_name, last_name;
         int entry_year = rand() % 5 + 18;
@@ -76,7 +76,7 @@ int main(){
         }
 
         id_to_last_name[id] = last_name;
-        ids.push_back(id);
+        ac_ids.push_back(id);
         cout << "(" << id << ", '" << first_name << "', '" << last_name << "', '";
         cout<< birth_date << "', " << sex << ", '" << reg_date << "', " << gpa << ", '" << email << "', '" << phone_number << "')"; 
         if(i != 499) cout << ",";
@@ -85,16 +85,16 @@ int main(){
     cout<< ";" << endl << endl;
 
     cout << "INSERT INTO ACTIVE(stud_id) VALUES " << endl;
-    for(string id: ids){
+    for(string id: ac_ids){
         cout << "(" << id << ")";
-        if(id != ids.back()) cout << ",";
+        if(id != ac_ids.back()) cout << ",";
         cout << endl;
     }
     cout << ";" << endl << endl;
 
 
     cout << "INSERT INTO STUDENT(stud_id, stud_fname, stud_lname, stud_birth_date, stud_sex, stud_reg_date, stud_gpa, stud_email, stud_number) VALUES " << endl;
-    ids.clear();
+    vector<string> ids;
     for(int i = 0; i < 100; i++){
         string first_name, last_name;
         int entry_year = rand() % 5 + 13;
@@ -415,8 +415,37 @@ int main(){
         cout<<endl;
     }
 
-    cout << ";" << endl;
+    cout << ";" << endl<<endl;
 
-    
+    cout << "INSERT INTO INST_AVAIL_HOUR(empl_id, avail_hour, avail_day) VALUES" <<endl;
+    bool started = 0;
+    for(string id: inst_ids){
+        for(int i = 0; i < 6; i++){
+            for(int j = 8; j <= 20; j++){
+                if(rand() % 4){
+                    if(started) cout <<","<<endl;
+                    started = 1;
+                    cout << "(" << id << ", " << j << ", " << i << ")";
+                }
+            }
+        }
+    }
+    cout<<";"<<endl<<endl;
+
+    cout << "INSERT INTO STUD_AVAIL_HOUR(stud_id, avail_hour, avail_day) VALUES" <<endl;
+    started = 0;
+    for(string id: ac_ids){
+        for(int i = 0; i < 6; i++){
+            for(int j = 8; j <= 20; j++){
+                if(rand() % 4){
+                    if(started) cout <<","<<endl;
+                    started = 1;
+                    cout << "(" << id << ", " << j << ", " << i << ")";
+                }
+            }
+        }
+    }
+    cout<<";"<<endl<<endl;
+
 
 }
