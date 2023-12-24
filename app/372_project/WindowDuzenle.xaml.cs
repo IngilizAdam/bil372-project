@@ -322,55 +322,59 @@ namespace _372_project
                 }
             }
 
-            for (int i = 0; i < duzenleTextBoxes.Count; i++)
+            if(mode == 1)
             {
-                string attributeName = "";
-                foreach (DataColumn attribute in dataSet2.Tables[0].Columns)
+                for (int i = 0; i < duzenleTextBoxes.Count; i++)
                 {
-                    string value = duzenleTextBoxes[i].Text.Trim();
-                    attributeName = attribute.ColumnName;
-                    Constants.NAME_TO_ATTR_DICT.TryGetValue(attributeName, out attributeName);
-                    if (attributeName.Equals(textBoxes[i].Name))
+                    string attributeName = "";
+                    foreach (DataColumn attribute in dataSet2.Tables[0].Columns)
                     {
-                        if (attribute.DataType == typeof(string))
+                        string value = duzenleTextBoxes[i].Text.Trim();
+                        attributeName = attribute.ColumnName;
+                        Constants.NAME_TO_ATTR_DICT.TryGetValue(attributeName, out attributeName);
+                        if (attributeName.Equals(textBoxes[i].Name))
                         {
-                            value = "'" + value + "'";
-                        }
-                        else if (attribute.DataType == typeof(DateTime))
-                        {
-                            value = "'" + DateTime.Parse(value).ToString("yyyy-MM-dd") + "'";
-                        }
+                            if (attribute.DataType == typeof(string))
+                            {
+                                value = "'" + value + "'";
+                            }
+                            else if (attribute.DataType == typeof(DateTime))
+                            {
+                                value = "'" + DateTime.Parse(value).ToString("yyyy-MM-dd") + "'";
+                            }
 
-                        updateTable2 += (attributeName + "=" + value + ",");
+                            updateTable2 += (attributeName + "=" + value + ",");
 
-                        if (attribute.DataType == typeof(Single))
-                        {
+                            if (attribute.DataType == typeof(Single))
+                            {
+                                break;
+                            }
+
+                            if (conditionCount2 > 0)
+                                whereTable2 += " AND";
+                            conditionCount2++;
+
+                            whereTable2 += " " + attributeName + "=";
+
+                            if (attribute.DataType == typeof(string))
+                            {
+                                whereTable2 += "'" + row[attribute.ColumnName] + "'";
+                            }
+                            else if (attribute.DataType == typeof(DateTime))
+                            {
+                                whereTable2 += "'" + ((DateTime)row[attribute.ColumnName]).ToString("yyyy-MM-dd") + "'";
+                            }
+                            else
+                            {
+                                whereTable2 += row[attribute.ColumnName];
+                            }
+
                             break;
                         }
-
-                        if (conditionCount2 > 0)
-                            whereTable2 += " AND";
-                        conditionCount2++;
-
-                        whereTable2 += " " + attributeName + "=";
-
-                        if (attribute.DataType == typeof(string))
-                        {
-                            whereTable2 += "'" + row[attribute.ColumnName] + "'";
-                        }
-                        else if (attribute.DataType == typeof(DateTime))
-                        {
-                            whereTable2 += "'" + ((DateTime)row[attribute.ColumnName]).ToString("yyyy-MM-dd") + "'";
-                        }
-                        else
-                        {
-                            whereTable2 += row[attribute.ColumnName];
-                        }
-
-                        break;
                     }
                 }
             }
+
 
             Debug.WriteLine(updateTable1.Substring(0, updateTable1.Length-1) + " " + whereTable1);
             Debug.WriteLine(updateTable2.Substring(0, updateTable2.Length-1) + " " + whereTable2);
@@ -378,7 +382,14 @@ namespace _372_project
             string cmd1 = updateTable1.Substring(0, updateTable1.Length - 1) + " " + whereTable1;
             string cmd2 = updateTable2.Substring(0, updateTable2.Length - 1) + " " + whereTable2;
 
-            transactionCommand += (cmd1 + ";" + cmd2 + ";");
+            if(mode == 0)
+            {
+                transactionCommand += (cmd1 + ";");
+            }
+            else if(mode == 1)
+            {
+                transactionCommand += (cmd1 + ";" + cmd2 + ";");
+            }
 
             int rowCount;
             try
